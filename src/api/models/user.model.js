@@ -42,7 +42,8 @@ const UserSchema = new Schema({
   provincia: { type: String, required: true, trim: true },
   pais: { type: String, required: true, trim: true },
   genero: { type: String, enum: ["hombre", "mujer"], required: true },
-  rol: { type: String, enum: ["user", "admin", "taller"] },
+  rol: { type: String, enum: ["user", "admin", "taller"], default: "user" },
+  imagen: { type: String },
 
   coche_cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
   coche_tienda: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
