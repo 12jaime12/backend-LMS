@@ -1,8 +1,11 @@
-const validator = require("validator");
 const mongoose = require("mongoose");
+const validator = require("validator");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
+
+//validator: isMobile -> isMobilePhone(str [, locale [, options]])
+//validator: isDNI -> isIdentityCard(str [, locale])
 
 const TallerSchema = new Schema({
   name: { type: String, required: true, trim: true },
@@ -31,7 +34,7 @@ const TallerSchema = new Schema({
     required: true,
     unique: true,
     trim: true,
-    validate: [validator.isMobilePhone["es-ES"]],
+    //validate: [validator.isMobilePhone["es-ES"]],
   },
   direccion: { type: String, required: true, trim: true },
   ciudad: { type: String, required: true, trim: true },
@@ -55,5 +58,5 @@ TallerSchema.pre("save", async function (next) {
   }
 });
 
-const Taller = mongoose.model("Taller", EventSchema);
+const Taller = mongoose.model("Taller", TallerSchema);
 module.exports = Taller;

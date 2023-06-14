@@ -1,14 +1,12 @@
 const { connect } = require("./src/utils/db");
-const dotenv = require("dotenv");
-dotenv.config();
 const express = require("express");
-
-connect();
+const dotenv = require("dotenv");
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT;
-
-const cors = require("cors");
+dotenv.config();
+connect();
 
 app.use(
   cors({
@@ -19,6 +17,19 @@ app.use(
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: false }));
+
+//--------------------------------------------------------
+//-------------------------ROUTES-------------------------
+//--------------------------------------------------------
+
+const tallerRoutes = require("./src/api/routes/Taller.routes");
+const reviewRoutes = require("./src/api/routes/Review.routes");
+const userRoutes = require("./src/api/routes/user.routes");
+
+//Nos importamos las rutas y las enlazamos a nuestra ruta principal mas el añadido de /api/v1 por medio de app.use()
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/taller", tallerRoutes);
+app.use("/api/v1/review", reviewRoutes);
 
 // app.use('*', (req, res, next) => {
 //   const error = new Error('Route not found');

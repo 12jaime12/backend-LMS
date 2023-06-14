@@ -1,5 +1,6 @@
-const validator = require("validator");
 const mongoose = require("mongoose");
+const validator = require("validator");
+
 const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
 
@@ -27,14 +28,14 @@ const UserSchema = new Schema({
     required: true,
     unique: true,
     trim: true,
-    validate: [validator.isIdentityCard["ES"], "dni incorrecto"],
+    //validate: [validator.isIdentityCard["ES"], "dni incorrecto"],
   },
   movil: {
     type: Number,
     required: true,
     unique: true,
     trim: true,
-    validate: [validator.isMobilePhone["es-ES"]],
+    //validate: [validator.isMobilePhone["es-ES"]],
   },
   direccion: { type: String, required: true, trim: true },
   ciudad: { type: String, required: true, trim: true },
@@ -60,5 +61,5 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-const User = mongoose.model("User", EventSchema);
+const User = mongoose.model("User", UserSchema);
 module.exports = User;
