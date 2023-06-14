@@ -1,4 +1,4 @@
-const Review = require("../models/review.model");
+const Review = require("../models/Review.model");
 const Taller = require("../models/taller.model");
 const User = require("../models/user.model");
 const nodemailer = require("nodemailer");
