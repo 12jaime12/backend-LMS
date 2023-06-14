@@ -35,6 +35,7 @@ const registerUser = async (req, res, next) => {
     } = req.body;
     await User.syncIndexes();
     let confirmationCode = randomCode();
+    console.log(confirmationCode);
     let imgPosted = req?.file?.path;
     try {
       console.log("email", email);
@@ -43,7 +44,10 @@ const registerUser = async (req, res, next) => {
       if (!findUser) {
         console.log("entro");
         //creamos el usuario, comprobamos si nos ha enviado una imagen y si no le ponemos una por defecto y lo guardamos
-        const newUser = new User({ ...req.body, confirmationCode });
+        const newUser = new User({
+          ...req.body,
+          confirmationCode: confirmationCode,
+        });
         console.log("usercreado", newUser);
         req.file
           ? (newUser.imagen = imgPosted)
