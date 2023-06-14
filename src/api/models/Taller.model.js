@@ -1,13 +1,17 @@
 const validator = require("validator");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
 
-//validator: isMobile -> isMobilePhone(str [, locale [, options]])
-//validator: isDNI -> isIdentityCard(str [, locale])
-
-const UserSchema = new Schema({
+const TallerSchema = new Schema({
   name: { type: String, required: true, trim: true },
+  cif: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
   password: {
     type: String,
     required: true,
@@ -22,13 +26,6 @@ const UserSchema = new Schema({
     trim: true,
     validate: [validator.isEmail, "email no valido"],
   },
-  dni: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    validate: [validator.isIdentityCard["ES"], "dni incorrecto"],
-  },
   movil: {
     type: Number,
     required: true,
@@ -39,18 +36,16 @@ const UserSchema = new Schema({
   direccion: { type: String, required: true, trim: true },
   ciudad: { type: String, required: true, trim: true },
   provincia: { type: String, required: true, trim: true },
-  pais: { type: String, required: true, trim: true },
-  genero: { type: String, enum: ["hombre", "mujer"], required: true },
-  rol: { type: String, enum: ["user", "admin", "taller"] },
+  rol: { type: String, default: "taller" },
 
-  coche_cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-  coche_tienda: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-  taller: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+  cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
   mecanico: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-  review_coche: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+  coche_reparacion: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+  coche_terminado: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
 });
 
-UserSchema.pre("save", async function (next) {
+TallerSchema.pre("save", async function (next) {
   try {
     this.password = await bcrypt.hash(this.password, 10);
     next();
@@ -60,5 +55,5 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-const User = mongoose.model("User", EventSchema);
-module.exports = User;
+const Taller = mongoose.model("Taller", EventSchema);
+module.exports = Taller;

@@ -5,50 +5,50 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 
-//--------1-----------REGISTER USER--------------------------
+//--------1-----------REGISTER TALLER------------------------
 //-----------------------------------------------------------
-const registerUser = async (req, res, next) => {};
+const registerTaller = async (req, res, next) => {};
 //--------2-----------CHECK CODE-----------------------------
 //-----------------------------------------------------------
-const checkCodeUser = async (req, res, next) => {};
+const checkCodeTaller = async (req, res, next) => {};
 //--------3-----------RESEND CODE----------------------------
 //-----------------------------------------------------------
-const resendCodeUser = async (req, res, next) => {};
+const resendCodeTaller = async (req, res, next) => {};
 //--------4-----------AUTOLOGIN------------------------------
 //-----------------------------------------------------------
-const autologinUser = async (req, res, next) => {};
+const autologinTaller = async (req, res, next) => {};
 //--------5-----------LOGIN----------------------------------
 //-----------------------------------------------------------
-const loginUser = async (req, res, next) => {};
+const loginTaller = async (req, res, next) => {};
 //--------6-----------FORGOT PASS----------------------------
 //-----------------------------------------------------------
-const forgotPasswordUser = async (req, res, next) => {};
+const forgotPasswordTaller = async (req, res, next) => {};
 //--------7-----------CHANGE PASS----------------------------
 //-----------------------------------------------------------
-const changePasswordUser = async (req, res, next) => {};
+const changePasswordTaller = async (req, res, next) => {};
 //--------8-----------UPDATE USER----------------------------
 //-----------------------------------------------------------
-const updateUser = async (req, res, next) => {};
+const updateTaller = async (req, res, next) => {};
 //--------9-----------DELETE USER----------------------------
 //-----------------------------------------------------------
-const deleteUser = async (req, res, next) => {};
+const deleteTaller = async (req, res, next) => {};
 //--------10-----------GET ALL-------------------------------
 //-----------------------------------------------------------
-const getAllUser = async (req, res, next) => {};
+const getAllTaller = async (req, res, next) => {};
 //--------11-----------GET ID--------------------------------
 //-----------------------------------------------------------
-const getIdUser = async (req, res, next) => {};
+const getIdTaller = async (req, res, next) => {};
 
 module.exports = {
-  registerUser,
-  checkCodeUser,
-  resendCodeUser,
-  autologinUser,
-  loginUser,
-  forgotPasswordUser,
-  changePasswordUser,
-  updateUser,
-  deleteUser,
-  getAllUser,
-  getIdUser,
+  registerTaller,
+  checkCodeTaller,
+  resendCodeTaller,
+  autologinTaller,
+  loginTaller,
+  forgotPasswordTaller,
+  changePasswordTaller,
+  updateTaller,
+  deleteTaller,
+  getAllTaller,
+  getIdTaller,
 };
