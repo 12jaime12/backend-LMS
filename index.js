@@ -24,7 +24,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: false }));
 
 const tallerRoutes = require("./src/api/routes/Taller.routes");
 const reviewRoutes = require("./src/api/routes/Review.routes");
-const userRoutes = require("./src/api/routes/user.routes");
+const userRoutes = require("./src/api/routes/User.routes");
 
 //Nos importamos las rutas y las enlazamos a nuestra ruta principal mas el añadido de /api/v1 por medio de app.use()
 app.use("/api/v1/user/", userRoutes);
