@@ -171,7 +171,25 @@ const checkCodeUser = async (req, res, next) => {
 };
 //--------3-----------RESEND CODE----------------------------
 //-----------------------------------------------------------
-const resendCodeUser = async (req, res, next) => {};
+const resendCodeUser = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const userToSendCode = await User.findOne({ email });
+
+    if (userToSendCode) {
+      const { _id } = userToSendCode;
+      console.log("id reenvio", _id);
+      return res.redirect(
+        307,
+        `http://localhost:${PORT}/api/v1/user/register/sendEmail/${_id}`
+      );
+    } else {
+      return res.status(404).json("El usuario no existe");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------4-----------AUTOLOGIN------------------------------
 //-----------------------------------------------------------
 const autologinUser = async (req, res, next) => {};
@@ -295,7 +313,49 @@ const changePasswordUser = async (req, res, next) => {
 };
 //--------8-----------UPDATE USER----------------------------
 //-----------------------------------------------------------
-const updateUser = async (req, res, next) => {};
+const updateUser = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const {
+      name,
+      apellido,
+      movil,
+      direccion,
+      ciudad,
+      provincia,
+      pais,
+      genero,
+    } = req.body;
+    const { imagen } = req?.file?.path;
+    const userUpdate = await User.findById(_id);
+
+    if (!userUpdate) {
+      return res.status(404).json("Usuario no encontrado");
+    } else {
+      name && (userUpdate.name = name);
+      apellido && (userUpdate.apellido = apellido);
+      movil && (userUpdate.movil = movil);
+      direccion && (userUpdate.direccion = direccion);
+      ciudad && (userUpdate.ciudad = ciudad);
+      provincia && (userUpdate.provincia = provincia);
+      pais && (userUpdate.pais = pais);
+      genero && (userUpdate.genero = genero);
+      imagen && (userUpdate.imagen = imagen);
+    }
+    try {
+      const updatedUser = await userUpdate.save();
+      if (!updatedUser) {
+        return res.status(404).json("No se ha podido guardar");
+      } else {
+        return res.status(200).json(updatedUser);
+      }
+    } catch (error) {
+      return next(error);
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------9-----------DELETE USER----------------------------
 //-----------------------------------------------------------
 const deleteUser = async (req, res, next) => {
@@ -321,7 +381,7 @@ const deleteUser = async (req, res, next) => {
       arrayCocheCliente.forEach(async (elem) => {
         await Coche.findByIdAndDelete(elem);
       });
-
+      //recorremos el array de coches de la tienda y actualizamos el catalogo para eliminar de cada coche el usuario
       arrayCocheTienda.forEach(async (elem) => {
         await Catalogo.findByIdAndUpdate(elem._id, {
           $pull: { cliente: userDelete._id },

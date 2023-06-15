@@ -40,7 +40,7 @@ module.exports = {
   registerTaller,
   checkCodeTaller,
   resendCodeTaller,
-  autologinTaller,
+
   loginTaller,
   forgotPasswordTaller,
   changePasswordTaller,

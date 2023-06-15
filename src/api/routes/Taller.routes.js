@@ -3,7 +3,6 @@ const {
   registerTaller,
   checkCodeTaller,
   resendCodeTaller,
-  autologinTaller,
   loginTaller,
   forgotPasswordTaller,
   changePasswordTaller,
@@ -20,7 +19,6 @@ const tallerRoutes = express; //express.Router() nos permite guardar en una vari
 tallerRoutes.post("/register", registerTaller); //-----------> AÑADIR SUBIDA DE IMAGEN, MIDDLEWARE MOULTER-CLOUDINARY
 tallerRoutes.post("/checkCode", checkCodeTaller);
 tallerRoutes.post("/resendCode", resendCodeTaller);
-tallerRoutes.post("/autologin", autologinTaller);
 tallerRoutes.post("/login", loginTaller);
 tallerRoutes.patch("/forgotPassword", forgotPasswordTaller);
 tallerRoutes.patch("/changePassword", changePasswordTaller);
