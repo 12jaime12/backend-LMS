@@ -7,46 +7,51 @@ const Schema = mongoose.Schema;
 //validator: isMobile -> isMobilePhone(str [, locale [, options]])
 //validator: isDNI -> isIdentityCard(str [, locale])
 
-const TallerSchema = new Schema({
-  name: { type: String, required: true, trim: true },
-  cif: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    trim: true,
-    validate: [validator.isStrongPassword],
-    minlength: [8, "min 8 characters"],
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    validate: [validator.isEmail, "email no valido"],
-  },
-  movil: {
-    type: Number,
-    required: true,
-    unique: true,
-    trim: true,
-    //validate: [validator.isMobilePhone["es-ES"]],
-  },
-  direccion: { type: String, required: true, trim: true },
-  ciudad: { type: String, required: true, trim: true },
-  provincia: { type: String, required: true, trim: true },
-  rol: { type: String, default: "taller" },
+const TallerSchema = new Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    cif: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+      validate: [validator.isStrongPassword],
+      minlength: [8, "min 8 characters"],
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      validate: [validator.isEmail, "email no valido"],
+    },
+    movil: {
+      type: Number,
+      required: true,
+      unique: true,
+      trim: true,
+      //validate: [validator.isMobilePhone["es-ES"]],
+    },
+    direccion: { type: String, required: true, trim: true },
+    ciudad: { type: String, required: true, trim: true },
+    provincia: { type: String, required: true, trim: true },
+    rol: { type: String, default: "taller" },
 
-  cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-  mecanico: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-  coche_reparacion: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-  coche_terminado: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-});
+    cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+    mecanico: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+    coche_reparacion: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+    coche_terminado: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 TallerSchema.pre("save", async function (next) {
   try {

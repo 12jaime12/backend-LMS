@@ -1,5 +1,5 @@
 const {
-  loginUsercheckCodeUser,
+  checkCodeUser,
   resendCodeUser,
   autologinUser,
   loginUser,
