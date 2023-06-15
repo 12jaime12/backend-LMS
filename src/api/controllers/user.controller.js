@@ -1,6 +1,3 @@
-const Review = require("../models/Review.model");
-const Taller = require("../models/taller.model");
-const User = require("../models/user.model");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
@@ -11,6 +8,9 @@ const {
 } = require("../../middleware/files.middleware");
 const randomPassword = require("../../utils/randomPass");
 const { generateToken } = require("../../utils/token");
+const User = require("../models/User.model");
+const Review = require("../models/Review.model");
+const Taller = require("../models/Taller.model");
 
 //--------1-----------REGISTER USER--------------------------
 //-----------------------------------------------------------
@@ -39,16 +39,13 @@ const registerUser = async (req, res, next) => {
     let imgPosted = req?.file?.path;
     try {
       console.log("email", email);
-      const findUser = await User.findOne({ email: req.body.email }); //--------CREO QUE FUNCIONA BIEN
-      console.log("findeuser", findUser);
+      const findUser = await User.findOne({ email }, { dni }); //--------CREO QUE FUNCIONA BIEN
       if (!findUser) {
-        console.log("entro");
         //creamos el usuario, comprobamos si nos ha enviado una imagen y si no le ponemos una por defecto y lo guardamos
         const newUser = new User({
           ...req.body,
           confirmationCode: confirmationCode,
         });
-        console.log("usercreado", newUser);
         req.file
           ? (newUser.imagen = imgPosted)
           : (newUser.imagen =
@@ -64,15 +61,20 @@ const registerUser = async (req, res, next) => {
             //----------------------->ENVIAR MAIL CON CODIGO DE CONFIRMACION<--------------------------------
           }
         } catch (error) {
+          if (req.file) deleteImgCloudinary(imgPosted);
           return res.status(404).json("Error guardando usuario");
         }
+      } else {
+        if (req.file) deleteImgCloudinary(imgPosted);
+        return res.status(404).json("El usuario ya existe.");
       }
     } catch (error) {
       if (req.file) deleteImgCloudinary(imgPosted);
-      return res.status(404).json("El usuario ya existe");
+      return res.status(500).json("Falta el email y/o dni");
     }
   } catch (error) {
     if (req.file) deleteImgCloudinary(imgPosted);
+    console.log("ERROR GENERAL 500");
     return next(error); //ERROR 500 -> Este seria un error general en el proceso de registro (fallo servidor..etc)
   }
 };
