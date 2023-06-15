@@ -45,7 +45,8 @@ const UserSchema = new Schema(
     genero: { type: String, enum: ["hombre", "mujer"], required: true },
     rol: { type: String, enum: ["user", "admin", "taller"], default: "user" },
     imagen: { type: String },
-
+    confirmationCode: { type: Number, required: true },
+    check: { type: Boolean, default: false },
     coche_cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
     coche_tienda: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
     taller: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
