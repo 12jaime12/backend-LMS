@@ -1,5 +1,5 @@
 const {
-  loginUsercheckCodeUser,
+  checkCodeUser,
   resendCodeUser,
   autologinUser,
   loginUser,
@@ -10,7 +10,7 @@ const {
   getAllUser,
   getIdUser,
   registerUser,
-} = require("../controllers/user.controller");
+} = require("../controllers/User.controller");
 
 //Nos traemos todos los controladores de User para enrutar cada uno de los diferentes servicios que tendrá
 

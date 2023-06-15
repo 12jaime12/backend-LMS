@@ -1,9 +1,9 @@
-const Review = require("../models/review.model");
-const Taller = require("../models/taller.model");
-const User = require("../models/user.model");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
+const User = require("../models/User.model");
+const Review = require("../models/Review.model");
+const Taller = require("../models/Taller.model");
 
 //--------1-----------CREATE REVIEW--------------------------
 //-----------------------------------------------------------
