@@ -1,7 +1,5 @@
 const {
-  //Nos traemos todos los controladores de User para enrutar cada uno de los diferentes servicios que tendrá
-  registerUser,
-  checkCodeUser,
+  loginUsercheckCodeUser,
   resendCodeUser,
   autologinUser,
   loginUser,
@@ -11,7 +9,11 @@ const {
   deleteUser,
   getAllUser,
   getIdUser,
+  registerUser,
 } = require("../controllers/user.controller");
+
+//Nos traemos todos los controladores de User para enrutar cada uno de los diferentes servicios que tendrá
+
 const express = require("express").Router(); //Nos requerimos la LIBRERIA EXPRESS
 const userRoutes = express; //express.Router() nos permite guardar en una variable las futuras rutas que crearemos
 
