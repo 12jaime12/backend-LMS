@@ -14,6 +14,7 @@ const Taller = require("../models/Taller.model");
 const Catalogo = require("../models/Catalogo.model");
 const Coche = require("../models/Coche.model");
 const PORT = process.env.PORT;
+configCloudinary();
 let confirmationCode = randomCode();
 
 //--------1-----------REGISTER USER--------------------------
@@ -192,7 +193,28 @@ const resendCodeUser = async (req, res, next) => {
 };
 //--------4-----------AUTOLOGIN------------------------------
 //-----------------------------------------------------------
-const autologinUser = async (req, res, next) => {};
+const autologinUser = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const userDB = await User.findOne({ email });
+
+    if (userDB) {
+      if ((password, userDB.password)) {
+        const token = generateToken(userDB._id, email);
+        return res.status(200).json({
+          user: userDB,
+          token,
+        });
+      } else {
+        return res.status(404).json("password dont match");
+      }
+    } else {
+      return res.status(404).json("User no register");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------5-----------LOGIN----------------------------------
 //-----------------------------------------------------------
 const loginUser = async (req, res, next) => {
@@ -236,7 +258,8 @@ const forgotPasswordUser = async (req, res, next) => {
     return next(error);
   }
 };
-
+//-----------redirect-----------SEND PASSWORD--------------
+//---------------------------------------------------------
 const sendPassword = async (req, res, next) => {
   console.log("entro");
   let randomPass = randomPassword();
@@ -400,10 +423,35 @@ const deleteUser = async (req, res, next) => {
 };
 //--------10-----------GET ALL-------------------------------
 //-----------------------------------------------------------
-const getAllUser = async (req, res, next) => {};
+const getAllUser = async (req, res, next) => {
+  try {
+    const allUsers = await User.find();
+    if (allUsers) {
+      return res.status(200).json(allUsers);
+    } else {
+      return res.status(404).json("No se ha encontrado ningun usuario");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------11-----------GET ID--------------------------------
 //-----------------------------------------------------------
-const getIdUser = async (req, res, next) => {};
+const getIdUser = async (req, res, next) => {
+  try {
+    const { _id } = req.params;
+    const userById = await User.findById(_id).populate(
+      "comentario coche_cliente coche_tienda taller review"
+    );
+    if (userById) {
+      return res.status(200).json(userById);
+    } else {
+      return res.status(404).json("No se ha encontrado el usuario");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 
 module.exports = {
   registerUser,
