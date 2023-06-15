@@ -13,6 +13,7 @@ const Review = require("../models/Review.model");
 const Taller = require("../models/Taller.model");
 const Catalogo = require("../models/Catalogo.model");
 const Coche = require("../models/Coche.model");
+const Comentario = require("../models/Comentario.model");
 const PORT = process.env.PORT;
 configCloudinary();
 let confirmationCode = randomCode();
@@ -375,7 +376,7 @@ const updateUser = async (req, res, next) => {
       pais,
       genero,
     } = req.body;
-    const { imagen } = req?.file?.path;
+    const newImagen = req?.file?.path;
     const userUpdate = await User.findById(_id);
 
     if (!userUpdate) {
@@ -389,7 +390,7 @@ const updateUser = async (req, res, next) => {
       provincia && (userUpdate.provincia = provincia);
       pais && (userUpdate.pais = pais);
       genero && (userUpdate.genero = genero);
-      imagen && (userUpdate.imagen = imagen);
+      newImagen && (userUpdate.imagen = newImagen);
     }
     try {
       const updatedUser = await userUpdate.save();
@@ -410,14 +411,15 @@ const updateUser = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const { _id } = req.user;
-    const userDelete = await User.findById(userDelete);
+    const userDelete = await User.findById(_id);
     const arrayCocheCliente = userDelete.coche_cliente;
     const arrayCocheTienda = userDelete.coche_tienda;
     const arrayReviews = userDelete.review_coche;
     const arrayTalleres = userDelete.taller;
+    const arrayComentarios = userDelete.comentario;
 
     await User.findByIdAndDelete(_id);
-    if (userDelete) {
+    if (!userDelete) {
       return res.status(404).json("No se ha podido borrar el usuario");
     } else {
       //recorremos el array de los talleres y PULLEAMOS el usuario, ya que no queremos eliminar el taller
@@ -439,6 +441,9 @@ const deleteUser = async (req, res, next) => {
       //recorremos el array de las review y BORRAMOS la review
       arrayReviews.forEach(async (elem) => {
         await Review.findByIdAndDelete(elem);
+      });
+      arrayComentarios.forEach(async (elem) => {
+        await Comentario.findByIdAndDelete(elem);
       });
 
       return res.status(200).json("Usuario borrado correctamente");

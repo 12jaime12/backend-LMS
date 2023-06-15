@@ -8,7 +8,7 @@ dotenv.config();
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "Hotel Calpe",
+    folder: "Legendary MotorSport",
     allowedFormats: ["jpg", "png", "jpeg", "gif", "svg", "webp"],
   },
 });
