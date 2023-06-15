@@ -10,6 +10,7 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
+    apellido: { type: String, required: true, trim: true },
     password: {
       type: String,
       required: true,
@@ -47,11 +48,11 @@ const UserSchema = new Schema(
     imagen: { type: String },
     confirmationCode: { type: Number, required: true },
     check: { type: Boolean, default: false },
-    coche_cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-    coche_tienda: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-    taller: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-    mecanico: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-    review_coche: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+    comentario: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentarios" }],
+    coche_cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coche" }],
+    coche_tienda: [{ type: mongoose.Schema.Types.ObjectId, ref: "Catalogo" }],
+    taller: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    review_coche: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
   },
   {
     timestamps: true,
