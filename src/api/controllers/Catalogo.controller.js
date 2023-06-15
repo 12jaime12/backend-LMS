@@ -1,6 +1,10 @@
+const dotenv = require("dotenv");
+const Catalogo = require("../models/Catalogo.model");
+
 //--------------create-car-----------------
 const createCar = async (req, res, next) => {
   try {
+    const newCatalogo = new Catalogo(req.body);
   } catch (error) {
     return next(error);
   }
@@ -8,6 +12,13 @@ const createCar = async (req, res, next) => {
 //--------------delete-car-----------------
 const deleteCar = async (req, res, next) => {
   try {
+    const { id } = req.params;
+    const catalogo = await Catalogo.findByIdAndDelete(id);
+    if (catalogo) {
+      return res.status(200).json("ok borrado");
+    } else {
+      return res.status(404).json("error al borrar");
+    }
   } catch (error) {
     return next(error);
   }
@@ -41,7 +52,7 @@ const getByModelo = async (req, res, next) => {
   }
 };
 //--------------get-by-potencia------------
-const changeState = async (req, res, next) => {
+const getByPotencia = async (req, res, next) => {
   try {
   } catch (error) {
     return next(error);
@@ -56,13 +67,6 @@ const addInteresado = async (req, res, next) => {
 };
 //--------------add-like-------------------
 const addLike = async (req, res, next) => {
-  try {
-  } catch (error) {
-    return next(error);
-  }
-};
-//--------------add-taller------------
-const addTaller = async (req, res, next) => {
   try {
   } catch (error) {
     return next(error);
