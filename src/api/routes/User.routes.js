@@ -11,6 +11,7 @@ const {
   getIdUser,
   registerUser,
   sendEmail,
+  sendPassword,
 } = require("../controllers/User.controller");
 
 //Nos traemos todos los controladores de User para enrutar cada uno de los diferentes servicios que tendrá
@@ -26,6 +27,7 @@ userRoutes.post("/resendCode", resendCodeUser);
 userRoutes.post("/autologin", autologinUser);
 userRoutes.post("/login", loginUser);
 userRoutes.post("/register/sendEmail/:id", sendEmail);
+userRoutes.patch("/sendPassword/:id", sendPassword);
 userRoutes.patch("/forgotPassword", forgotPasswordUser);
 userRoutes.patch("/changePassword", changePasswordUser);
 userRoutes.patch("/updateUser", updateUser);

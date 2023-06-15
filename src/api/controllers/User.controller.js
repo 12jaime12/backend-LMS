@@ -11,8 +11,11 @@ const { generateToken } = require("../../utils/token");
 const User = require("../models/User.model");
 const Review = require("../models/Review.model");
 const Taller = require("../models/Taller.model");
+const Catalogo = require("../models/Catalogo.model");
+const Coche = require("../models/Coche.model");
 const PORT = process.env.PORT;
 let confirmationCode = randomCode();
+
 //--------1-----------REGISTER USER--------------------------
 //-----------------------------------------------------------
 const registerUser = async (req, res, next) => {
@@ -198,16 +201,143 @@ const loginUser = async (req, res, next) => {
 };
 //--------6-----------FORGOT PASS----------------------------
 //-----------------------------------------------------------
-const forgotPasswordUser = async (req, res, next) => {};
+const forgotPasswordUser = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const userDB = await User.findOne({ email });
+
+    if (userDB) {
+      return res.redirect(
+        307,
+        `http://localhost:8080/api/v1/user/sendPassword/${userDB._id}`
+      );
+    } else {
+      return res.status(404).json("El usuario no existe");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const sendPassword = async (req, res, next) => {
+  console.log("entro");
+  let randomPass = randomPassword();
+  try {
+    const { id } = req.params;
+    const userDB = await User.findById(id);
+    const emailDB = process.env.EMAIL;
+    const passDB = process.env.PASSWORD;
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: emailDB,
+        pass: passDB,
+      },
+    });
+    const mailOptions = {
+      from: emailDB,
+      to: userDB.email,
+      subject: "Confirmation code",
+      text: `Aquí tienes tu nuevo codigo de acceso: ${randomPass}`,
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+        return res.status(404).json({
+          user: userDB,
+          confirmationCode: "error enviando email. Reenviar codigo",
+        });
+      } else {
+        console.log("Email sent: " + info.response);
+        return res.status(200).json({
+          user: userDB,
+          confirmationCode: userDB.confirmationCode,
+        });
+      }
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------7-----------CHANGE PASS----------------------------
 //-----------------------------------------------------------
-const changePasswordUser = async (req, res, next) => {};
+const changePasswordUser = async (req, res, next) => {
+  try {
+    const { password, newPassword } = req.body;
+    const { _id } = req.user;
+
+    if (bcrypt.compareSync(password, req.user.password)) {
+      const newPassEncryp = bcrypt.hashSync(newPassword);
+
+      try {
+        await User.findByIdAndUpdate(_id, { password: newPassEncryp });
+        const userUpdate = await User.findById(_id);
+
+        if (bcrypt.compareSync(newPassword, userUpdate.password)) {
+          return res.status(200).json({
+            updateUser: true,
+          });
+        } else {
+          return res.status(200).json({
+            updateUser: false,
+          });
+        }
+      } catch (error) {
+        return next(error);
+      }
+    } else {
+      return res.status(404).json("Contraseña incorrecta");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------8-----------UPDATE USER----------------------------
 //-----------------------------------------------------------
 const updateUser = async (req, res, next) => {};
 //--------9-----------DELETE USER----------------------------
 //-----------------------------------------------------------
-const deleteUser = async (req, res, next) => {};
+const deleteUser = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const userDelete = await User.findById(userDelete);
+    const arrayCocheCliente = userDelete.coche_cliente;
+    const arrayCocheTienda = userDelete.coche_tienda;
+    const arrayReviews = userDelete.review_coche;
+    const arrayTalleres = userDelete.taller;
+
+    await User.findByIdAndDelete(_id);
+    if (userDelete) {
+      return res.status(404).json("No se ha podido borrar el usuario");
+    } else {
+      //recorremos el array de los talleres y PULLEAMOS el usuario, ya que no queremos eliminar el taller
+      arrayTalleres.forEach(async (elem) => {
+        await Taller.findByIdAndUpdate(elem._id, {
+          $pull: { cliente: userDelete._id },
+        });
+      });
+      //recorremos el array de coches que tiene el cliente
+      arrayCocheCliente.forEach(async (elem) => {
+        await Coche.findByIdAndDelete(elem);
+      });
+
+      arrayCocheTienda.forEach(async (elem) => {
+        await Catalogo.findByIdAndUpdate(elem._id, {
+          $pull: { cliente: userDelete._id },
+        });
+      });
+      //recorremos el array de las review y BORRAMOS la review
+      arrayReviews.forEach(async (elem) => {
+        await Review.findByIdAndDelete(elem);
+      });
+
+      return res.status(200).json("Usuario borrado correctamente");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------10-----------GET ALL-------------------------------
 //-----------------------------------------------------------
 const getAllUser = async (req, res, next) => {};
@@ -228,4 +358,5 @@ module.exports = {
   getAllUser,
   getIdUser,
   sendEmail,
+  sendPassword,
 };
