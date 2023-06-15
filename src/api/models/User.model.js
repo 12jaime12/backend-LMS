@@ -44,7 +44,7 @@ const UserSchema = new Schema(
     provincia: { type: String, required: true, trim: true },
     pais: { type: String, required: true, trim: true },
     genero: { type: String, enum: ["hombre", "mujer"], required: true },
-    rol: { type: String, enum: ["user", "admin", "taller"], default: "user" },
+    rol: { type: String, enum: ["client", "admin", "taller"], default: "user" },
     imagen: { type: String },
     confirmationCode: { type: Number, required: true },
     check: { type: Boolean, default: false },
