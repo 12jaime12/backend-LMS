@@ -1,9 +1,10 @@
 const dotenv = require("dotenv");
+const Catalogo = require("../models/Catalogo.model");
 
 //--------------create-car-----------------
 const createCar = async (req, res, next) => {
   try {
-    const newUser = new User(req.body);
+    const newCatalogo = new Catalogo(req.body);
   } catch (error) {
     return next(error);
   }
@@ -11,6 +12,13 @@ const createCar = async (req, res, next) => {
 //--------------delete-car-----------------
 const deleteCar = async (req, res, next) => {
   try {
+    const { id } = req.params;
+    const catalogo = await Catalogo.findByIdAndDelete(id);
+    if (catalogo) {
+      return res.status(200).json("ok borrado");
+    } else {
+      return res.status(404).json("error al borrar");
+    }
   } catch (error) {
     return next(error);
   }
