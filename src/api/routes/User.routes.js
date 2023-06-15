@@ -1,3 +1,4 @@
+const { isAuth } = require("../../middleware/auth.middleware");
 const {
   checkCodeUser,
   resendCodeUser,
@@ -29,7 +30,7 @@ userRoutes.post("/login", loginUser);
 userRoutes.post("/register/sendEmail/:id", sendEmail);
 userRoutes.patch("/sendPassword/:id", sendPassword);
 userRoutes.patch("/forgotPassword", forgotPasswordUser);
-userRoutes.patch("/changePassword", changePasswordUser);
+userRoutes.patch("/changePassword", [isAuth], changePasswordUser);
 userRoutes.patch("/updateUser", updateUser);
 userRoutes.delete("/deleteUser", deleteUser);
 userRoutes.get("/", getAllUser);

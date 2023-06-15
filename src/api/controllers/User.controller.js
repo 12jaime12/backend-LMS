@@ -27,6 +27,7 @@ const registerUser = async (req, res, next) => {
   try {
     const {
       email,
+      apellido,
       name,
       password,
       movil,
@@ -71,7 +72,7 @@ const registerUser = async (req, res, next) => {
         }
       } catch (error) {
         if (req.file) deleteImgCloudinary(imgPosted);
-        return res.status(404).json("Error guardando usuario");
+        return next(error);
       }
     } else {
       if (req.file) deleteImgCloudinary(imgPosted);
@@ -156,13 +157,13 @@ const checkCodeUser = async (req, res, next) => {
         });
       } else {
         await User.findByIdAndDelete(userExist._id);
-        //deleteImgCloudinary(userExist.imagen);
+        deleteImgCloudinary(userExist.imagen);
         return res.status(200).json({
           userExist,
           check: false,
-          delete: (await User.findByIdAndDelete(userExist._id))
-            ? "Codigo erroneo -> usuario borrado"
-            : "fallo al borrar usuario",
+          delete: (await User.findById(userExist._id))
+            ? "fallo al borrar usuario"
+            : "Codigo erroneo -> usuario borrado",
         });
       }
     }
@@ -261,11 +262,14 @@ const forgotPasswordUser = async (req, res, next) => {
 //-----------redirect-----------SEND PASSWORD--------------
 //---------------------------------------------------------
 const sendPassword = async (req, res, next) => {
-  console.log("entro");
+  console.log(
+    "entroooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+  );
   let randomPass = randomPassword();
   try {
     const { id } = req.params;
     const userDB = await User.findById(id);
+    console.log("OLDDDD", userDB.password);
     const emailDB = process.env.EMAIL;
     const passDB = process.env.PASSWORD;
 
@@ -279,22 +283,39 @@ const sendPassword = async (req, res, next) => {
     const mailOptions = {
       from: emailDB,
       to: userDB.email,
-      subject: "Confirmation code",
+      subject: "Nuevo codigo de acceso",
       text: `Aquí tienes tu nuevo codigo de acceso: ${randomPass}`,
     };
-    transporter.sendMail(mailOptions, function (error, info) {
+    transporter.sendMail(mailOptions, async function (error, info) {
       if (error) {
         console.log(error);
         return res.status(404).json({
           user: userDB,
-          confirmationCode: "error enviando email. Reenviar codigo",
+          pass: "error enviando email. Reenviar pass",
         });
       } else {
         console.log("Email sent: " + info.response);
-        return res.status(200).json({
-          user: userDB,
-          confirmationCode: userDB.confirmationCode,
-        });
+        try {
+          const newPassword = bcrypt.hashSync(randomPass, 10);
+          await User.findByIdAndUpdate(id, { password: newPassword });
+          const userUpdate = await User.findById(id);
+          console.log(newPassword);
+          console.log(userUpdate.password);
+
+          if (bcrypt.compareSync(randomPass, userUpdate.password)) {
+            return res.status(200).json({
+              userUpdate: true,
+              passUpdate: true,
+            });
+          } else {
+            return res.status(404).json({
+              userUpdate: false,
+              passUpdate: false,
+            });
+          }
+        } catch (error) {
+          return next(error);
+        }
       }
     });
   } catch (error) {
@@ -305,11 +326,16 @@ const sendPassword = async (req, res, next) => {
 //-----------------------------------------------------------
 const changePasswordUser = async (req, res, next) => {
   try {
+    console.log(req.user);
     const { password, newPassword } = req.body;
     const { _id } = req.user;
+    const userToChange = await User.findById(_id);
+    console.log(userToChange.password);
+    /* const { id } = req.user;
+    console.log(id); */
 
-    if (bcrypt.compareSync(password, req.user.password)) {
-      const newPassEncryp = bcrypt.hashSync(newPassword);
+    if (bcrypt.compareSync(password, userToChange.password)) {
+      const newPassEncryp = bcrypt.hashSync(newPassword, 10);
 
       try {
         await User.findByIdAndUpdate(_id, { password: newPassEncryp });
