@@ -126,7 +126,46 @@ const sendEmail = async (req, res, next) => {
 
 //--------2-----------CHECK CODE-----------------------------
 //-----------------------------------------------------------
-const checkCodeUser = async (req, res, next) => {};
+const checkCodeUser = async (req, res, next) => {
+  try {
+    const { email, confirmationCode } = req.body;
+    const userExist = await User.findOne({ email });
+
+    //Buscamos al usuario por su email. Si el usuario existe comparamos los codigos de confirmacion. Si es correcto, le actualizamos
+    //la propiedad check a true, y si lo ha introducido mal el usuario se borrará de nuestra base de datos.
+    if (!userExist) {
+      return res.status(404).json("El usuario no existe");
+    } else {
+      if (confirmationCode == userExist.confirmationCode) {
+        try {
+          await userExist.updateOne({ check: true });
+        } catch (error) {
+          return res
+            .status(404)
+            .json("No se ha podido actualizar el usuario", res.message);
+        }
+        const updateUser = await User.findOne({ email });
+        console.log("userexist", userExist);
+        return res.status(200).json({
+          testCheck: updateUser.check === true ? true : false,
+          updateUser,
+        });
+      } else {
+        await User.findByIdAndDelete(userExist._id);
+        //deleteImgCloudinary(userExist.imagen);
+        return res.status(200).json({
+          userExist,
+          check: false,
+          delete: (await User.findByIdAndDelete(userExist._id))
+            ? "Codigo erroneo -> usuario borrado"
+            : "fallo al borrar usuario",
+        });
+      }
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------3-----------RESEND CODE----------------------------
 //-----------------------------------------------------------
 const resendCodeUser = async (req, res, next) => {};
@@ -135,7 +174,28 @@ const resendCodeUser = async (req, res, next) => {};
 const autologinUser = async (req, res, next) => {};
 //--------5-----------LOGIN----------------------------------
 //-----------------------------------------------------------
-const loginUser = async (req, res, next) => {};
+const loginUser = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const userDB = await User.findOne({ email });
+
+    if (userDB) {
+      if (bcrypt.compareSync(password, userDB.password)) {
+        const token = generateToken(userDB._id, email);
+        return res.status(200).json({
+          user: userDB,
+          token,
+        });
+      } else {
+        return res.status(404).json("Contraseña incorrecta");
+      }
+    } else {
+      return res.status(404).json("El usuario no existe");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------6-----------FORGOT PASS----------------------------
 //-----------------------------------------------------------
 const forgotPasswordUser = async (req, res, next) => {};
