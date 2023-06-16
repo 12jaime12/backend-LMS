@@ -81,7 +81,6 @@ const registerUser = async (req, res, next) => {
     }
   } catch (error) {
     if (req.file) deleteImgCloudinary(imgPosted);
-    if (req.file) deleteImgCloudinary(imgPosted);
     return res.status(500).json("Falta el email y/o dni"); //ERROR 500 -> Este seria un error general en el proceso de registro (fallo servidor..etc)
   }
 };
@@ -412,6 +411,7 @@ const deleteUser = async (req, res, next) => {
   try {
     const { _id } = req.user;
     const userDelete = await User.findById(_id);
+    console.log(userDelete.imagen);
     const arrayCocheCliente = userDelete.coche_cliente;
     const arrayCocheTienda = userDelete.coche_tienda;
     const arrayReviews = userDelete.review_coche;
@@ -422,6 +422,8 @@ const deleteUser = async (req, res, next) => {
     if (!userDelete) {
       return res.status(404).json("No se ha podido borrar el usuario");
     } else {
+      console.log("booooooorrraaaaaarrrrr", userDelete.imagen);
+      deleteImgCloudinary(userDelete.imagen);
       //recorremos el array de los talleres y PULLEAMOS el usuario, ya que no queremos eliminar el taller
       arrayTalleres.forEach(async (elem) => {
         await Taller.findByIdAndUpdate(elem._id, {
@@ -445,7 +447,7 @@ const deleteUser = async (req, res, next) => {
       arrayComentarios.forEach(async (elem) => {
         await Comentario.findByIdAndDelete(elem);
       });
-      deleteImgCloudinary(userDelete.imagen);
+
       return res.status(200).json("Usuario borrado correctamente");
     }
   } catch (error) {
