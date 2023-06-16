@@ -445,7 +445,7 @@ const deleteUser = async (req, res, next) => {
       arrayComentarios.forEach(async (elem) => {
         await Comentario.findByIdAndDelete(elem);
       });
-
+      deleteImgCloudinary(userDelete.imagen);
       return res.status(200).json("Usuario borrado correctamente");
     }
   } catch (error) {

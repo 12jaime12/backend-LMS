@@ -20,22 +20,22 @@ const {
 //Nos traemos todos los controladores de User para enrutar cada uno de los diferentes servicios que tendrá
 
 const express = require("express").Router(); //Nos requerimos la LIBRERIA EXPRESS
-const userRoutes = express; //express.Router() nos permite guardar en una variable las futuras rutas que crearemos
+const UserRoutes = express; //express.Router() nos permite guardar en una variable las futuras rutas que crearemos
 
 //Creamos las rutas en función del tipo de request que será (post, get, patch, delete) y le asignamos una ruta y el controlador
 //que se ejecutará en esta ruta
-userRoutes.post("/register", upload.single("imagen"), registerUser); //-----------> AÑADIR SUBIDA DE IMAGEN, MIDDLEWARE MOULTER-CLOUDINARY
-userRoutes.post("/checkCode", checkCodeUser);
-userRoutes.post("/resendCode", resendCodeUser);
-userRoutes.post("/autologin", autologinUser);
-userRoutes.post("/login", loginUser);
-userRoutes.post("/register/sendEmail/:id", sendEmail);
-userRoutes.patch("/sendPassword/:id", sendPassword);
-userRoutes.patch("/forgotPassword", forgotPasswordUser);
-userRoutes.patch("/changePassword", [isAuth], changePasswordUser);
-userRoutes.patch("/updateUser", [isAuth], updateUser);
-userRoutes.delete("/deleteUser", [isAuth], deleteUser);
-userRoutes.get("/", getAllUser);
-userRoutes.get("/:id", getIdUser);
+UserRoutes.post("/register", upload.single("imagen"), registerUser); //-----------> AÑADIR SUBIDA DE IMAGEN, MIDDLEWARE MOULTER-CLOUDINARY
+UserRoutes.post("/checkCode", checkCodeUser);
+UserRoutes.post("/resendCode", resendCodeUser);
+UserRoutes.post("/autologin", autologinUser);
+UserRoutes.post("/login", loginUser);
+UserRoutes.post("/register/sendEmail/:id", sendEmail);
+UserRoutes.patch("/sendPassword/:id", sendPassword);
+UserRoutes.patch("/forgotPassword", forgotPasswordUser);
+UserRoutes.patch("/changePassword", [isAuth], changePasswordUser);
+UserRoutes.patch("/updateUser", [isAuth], updateUser);
+UserRoutes.delete("/deleteUser", [isAuth], deleteUser);
+UserRoutes.get("/", getAllUser);
+UserRoutes.get("/:id", getIdUser);
 
-module.exports = userRoutes;
+module.exports = UserRoutes;
