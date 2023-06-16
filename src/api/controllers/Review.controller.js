@@ -82,6 +82,18 @@ const mediaPuntuacionReview = async (req, res, next) => {
     if (!coche) {
       return res.status(404).json("Error al cargar el coche");
     } else {
+      const arrayReviews = coche.reviews;
+      const sumaTotal = 0;
+      arrayReviews.forEach((elem) => {
+        sumaTotal += elem.estrellas;
+      });
+      const media = sumaTotal / arrayReviews.length;
+
+      if (media) {
+        return res.status(200).json("La media es: " + media);
+      } else {
+        return res.status(404).json();
+      }
     }
   } catch (error) {
     return next(error);
@@ -105,7 +117,7 @@ const getReviewCatalogo = async (req, res, next) => {
   }
 };
 
-//--------6-----------GET BY DNI-----------------------------
+//--------6-----------GET BY DNI-----------------------------     ///GET BY ID Y GET BY DNI DEVUELVEN EL USUARIO
 //-----------------------------------------------------------
 const getReviewByDni = async (req, res, next) => {
   try {
@@ -131,5 +143,4 @@ module.exports = {
   mediaPuntuacionReview,
   getReviewByDni,
   getReviewCatalogo,
-  getReviewCoche,
 };
