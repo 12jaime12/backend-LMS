@@ -158,13 +158,7 @@ const getByModelo = async (req, res, next) => {
     return next(error);
   }
 };
-//--------------get-by-potencia------------
-const changeState = async (req, res, next) => {
-  try {
-  } catch (error) {
-    return next(error);
-  }
-};
+
 //--------------add-interesado-------------
 const addInteresado = async (req, res, next) => {
   try {
