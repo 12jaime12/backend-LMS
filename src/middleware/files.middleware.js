@@ -2,7 +2,6 @@ const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const dotenv = require("dotenv");
-const User = require("../api/models/User.model");
 
 dotenv.config();
 
@@ -10,7 +9,7 @@ dotenv.config();
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "Legendary MotorSport",
+    folder: "nodeProyect",
     allowedFormats: ["jpg", "png", "jpeg", "gif", "svg", "webp"],
   },
 });
