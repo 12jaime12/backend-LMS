@@ -5,7 +5,6 @@ const {
   mediaPuntuacionReview,
   getReviewByDni,
   getReviewCatalogo,
-  getReviewCoche,
 } = require("../controllers/Review.controller");
 const express = require("express").Router(); //Nos requerimos la LIBRERIA EXPRESS
 const reviewRoutes = express; //express.Router() nos permite guardar en una variable las futuras rutas que crearemos
@@ -17,6 +16,5 @@ reviewRoutes.delete("/deleteReview", deleteReview);
 reviewRoutes.get("/mediaPuntuaciones", mediaPuntuacionReview);
 reviewRoutes.get("/:dni", getReviewByDni);
 reviewRoutes.get("/catalogo", getReviewCatalogo);
-reviewRoutes.get("/coche", getReviewCoche);
 
 module.exports = reviewRoutes;
