@@ -4,7 +4,7 @@ const Comentario = require("../models/Comentario.model");
 const User = require("../models/User.model");
 
 //----------------create-------------
-const createComentCoche = async (req, res, next) => {
+const createComent = async (req, res, next) => {
   try {
     const { id } = req.params; //idcoche
     const { content, variable } = req.body;
@@ -132,25 +132,46 @@ const getAll = async (req, res, next) => {
     return next(error);
   }
 };
-//----------------get-by-car---------
-const getByCar = async (req, res, next) => {
+//----------------get-by-coche---------
+const getByCoche = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const coments = await Comentario.find({ Coche: id });
+    if (coments) {
+      return res.status(200).json(coments);
+    } else {
+      return res.status(404).json("Error al encontrar los comentarios");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+//----------------get-by-catalogo---------
+const getByCatalogo = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const coments = await Comentario.find({ Catalogo: id });
+    if (coments) {
+      return res.status(200).json(coments);
+    } else {
+      return res.status(404).json("Error al encontrar los comentarios");
+    }
   } catch (error) {
     return next(error);
   }
 };
 //----------------get-by-id----------
-const getById = async (req, res, next) => {
-  try {
-  } catch (error) {
-    return next(error);
-  }
-};
-//----------------add-like-----------
-const addLike = async (req, res, next) => {
-  try {
-  } catch (error) {
-    return next(error);
-  }
+// const getById = async (req, res, next) => {
+//   try {
+//   } catch (error) {
+//     return next(error);
+//   }
+// };
+
+module.exports = {
+  createComent,
+  deleteComent,
+  getAll,
+  getByCoche,
+  getByCatalogo,
 };

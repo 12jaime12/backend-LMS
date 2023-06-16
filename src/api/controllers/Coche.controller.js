@@ -1,6 +1,9 @@
+const Coche = require("../models/coche.model");
+
 //--------------create-car-----------------
 const createCar = async (req, res, next) => {
   try {
+    await Coche.syncIndexes();
   } catch (error) {
     return next(error);
   }
