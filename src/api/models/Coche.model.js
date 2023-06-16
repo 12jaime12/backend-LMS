@@ -13,11 +13,15 @@ const CocheSchema = new mongoose.Schema(
     precio: { type: Number },
     taller: { type: mongoose.Schema.Types.ObjectId, ref: "Taller" },
     cliente: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    estado: { type: String, enum: ["venta", "none", "taller"] },
+    estado: {
+      type: String,
+      enum: ["venta", "none", "taller"],
+      default: "none",
+    },
     interesados: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     comentario: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentario" }],
     like: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    imageFront: { type: String, required: true },
+    imageFront: { type: String },
   },
   {
     timestamps: true,

@@ -7,20 +7,15 @@ const User = require("../models/User.model");
 //--------------create-coche-----------------
 const createCoche = async (req, res, next) => {
   try {
+    console.log(req.user);
     await Coche.syncIndexes();
-    const { marca, modelo, year, combustible, precio, imagen } = req.body;
     const { _id } = req.user;
-
+    const cocheImg = req?.file?.path;
     const user = await User.findById(_id);
-    const newCoche = new Coche({
-      marca: marca,
-      modelo: modelo,
-      year: year,
-      combustible: combustible,
-      precio: precio,
-      imagen: imagen,
-    });
-
+    console.log("user", user);
+    const newCoche = new Coche({ ...req.body, cliente: user._id });
+    cocheImg && (newCoche.imagen = cocheImg);
+    console.log(" NEW COCHEEEEEE -------", newCoche);
     try {
       const coche = await newCoche.save();
       if (!coche) {
@@ -28,8 +23,9 @@ const createCoche = async (req, res, next) => {
           .status(404)
           .json("El coche no se ha guardado en la BBDD correctamente");
       } else {
-        await coche.updateOne({ $push: { cliente: user._id } });
+        //await coche.updateOne({ $push: { cliente: user._id } });
         await user.updateOne({ $push: { coche_cliente: coche._id } });
+        return res.status(200).json(coche);
       }
     } catch (error) {
       return next(error);
@@ -41,6 +37,7 @@ const createCoche = async (req, res, next) => {
 //--------------delete-car-----------------
 const deleteCoche = async (req, res, next) => {
   try {
+    console.log("entro delete");
     const { id } = req.params;
     const { _id } = req.user;
     const user = await User.findById(_id);
@@ -52,6 +49,7 @@ const deleteCoche = async (req, res, next) => {
       if (cocheToDelete.estado == "none") {
         await user.updateOne({ $pull: { coche_cliente: id } });
         //-------------------->borrar imagenes<-----------------------------
+        return res.status(200).json("coche del USER borrado correctamente");
       }
       if (cocheToDelete.estado == "venta") {
         //Recogemos los arrays populados que hay actualizar, ya que el coche va a estar en los intereses de los usuarios, va a tener
@@ -70,13 +68,13 @@ const deleteCoche = async (req, res, next) => {
         arrayLike.forEach(async (elem) => {
           await elem.updateOne({ $pull: { like_coche: elem } });
         });
+        return res.status(200).json("coche en VENTA borrado correctamente");
       }
       if (cocheToDelete.estado == "taller") {
         return res
           .status(404)
           .json("El coche esta en el taller y no se puede borrar");
       }
-      return res.status(200).json("coche borrado correctamente");
     }
   } catch (error) {
     return next(error);
@@ -89,20 +87,35 @@ const updateCoche = async (req, res, next) => {
     const { precio } = req.body;
 
     const cocheUpdate = await Coche.findByIdAndUpdate(id, { precio: precio });
-    if (cocheUpdate) {
-      return res.status(200).json("Precio del coche actualizado");
-    } else {
-      return res
-        .status(404)
-        .json("El precio del coche no se ha podido actualizar");
+    console.log(cocheUpdate);
+    try {
+      const cocheSave = await cocheUpdate.save();
+      if (cocheSave) {
+        return res.status(200).json({
+          test: "precio actualizado",
+          cocheSave,
+        });
+      } else {
+        return res
+          .status(404)
+          .json("El precio del coche no se ha podido actualizar");
+      }
+    } catch (error) {
+      return next(error);
     }
   } catch (error) {
     return next(error);
   }
 };
 //--------------get-all--------------------
-const getAll = async (req, res, next) => {
+const getAllCoche = async (req, res, next) => {
   try {
+    const allCoches = await Coche.find();
+    if (allCoches) {
+      return res.status(200).json(allCoches);
+    } else {
+      return res.status(404).json("No hay ningun coche en la base de datos");
+    }
   } catch (error) {
     return next(error);
   }
@@ -110,6 +123,19 @@ const getAll = async (req, res, next) => {
 //--------------get-by-marca---------------
 const getByMarca = async (req, res, next) => {
   try {
+    const { marca } = req.params;
+    const allCoches = await Coche.find();
+    if (allCoches) {
+      const marcas = [];
+      allCoches.forEach((coche) => {
+        if (marca == coche.marca) {
+          marcas.push(coche);
+        }
+      });
+      return res.status(200).json(marcas);
+    } else {
+      return res.status(404).json("No se ha encontrado ningun coche");
+    }
   } catch (error) {
     return next(error);
   }
@@ -117,6 +143,17 @@ const getByMarca = async (req, res, next) => {
 //--------------get-by-modelo--------------
 const getByModelo = async (req, res, next) => {
   try {
+    const { modelo } = req.params;
+    const allCoches = await Coche.find();
+    if (allCoches) {
+      const modelos = [];
+      allCoches.forEach((coche) => {
+        if (modelo == coche.modelo) {
+          modelos.push(coche);
+        }
+      });
+      return res.status(200).json(modelos);
+    }
   } catch (error) {
     return next(error);
   }
@@ -157,4 +194,11 @@ const getByLike = async (req, res, next) => {
   }
 };
 
-module.exports = { createCoche, deleteCoche };
+module.exports = {
+  createCoche,
+  deleteCoche,
+  updateCoche,
+  getByMarca,
+  getAllCoche,
+  getByModelo,
+};
