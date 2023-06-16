@@ -251,7 +251,7 @@ const forgotPasswordUser = async (req, res, next) => {
     if (userDB) {
       return res.redirect(
         307,
-        `http://localhost:8080/api/v1/user/sendPassword/${userDB._id}`
+        `http://localhost:${PORT}/api/v1/user/sendPassword/${userDB._id}`
       );
     } else {
       return res.status(404).json("El usuario no existe");
