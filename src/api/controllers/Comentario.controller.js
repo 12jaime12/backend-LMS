@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 const Catalogo = require("../models/Catalogo.model");
-=======
 const Coche = require("../models/Coche.model");
->>>>>>> 7b7a58e9e20178539f2616892be98998755541b9
 const Comentario = require("../models/Comentario.model");
 const User = require("../models/User.model");
 
