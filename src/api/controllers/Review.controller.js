@@ -10,6 +10,7 @@ const Catalogo = require("../models/Catalogo.model");
 //-----------------------------------------------------------
 const createReview = async (req, res, next) => {
   try {
+    await Review.syncIndexes();
     const { id } = req.params; //id del coche que la recibe por parametros desde la url al entrar a la pagina del coche
     const { content, estrellas } = req.body;
     const { _id } = req.user;
