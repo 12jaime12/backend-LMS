@@ -55,8 +55,11 @@ const UserSchema = new Schema(
     comentario: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentarios" }],
     coche_cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coche" }],
     coche_tienda: [{ type: mongoose.Schema.Types.ObjectId, ref: "Catalogo" }],
+    intereses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coche" }],
     taller: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     review_coche: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
+    like_coche: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coche" }],
+    like_review: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
   },
   {
     timestamps: true,

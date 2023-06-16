@@ -1,6 +1,6 @@
+const Coche = require("../models/Coche.model");
 const Comentario = require("../models/Comentario.model");
 const User = require("../models/User.model");
-const Coche = require("../models/coche.model");
 
 //----------------create-------------
 const createComentCoche = async (req, res, next) => {

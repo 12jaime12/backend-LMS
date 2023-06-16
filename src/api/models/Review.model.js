@@ -7,7 +7,7 @@ const ReviewSchema = new Schema(
     coche_tienda: [{ type: mongoose.Schema.Types.ObjectId, ref: "Catalogo" }],
     taller: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    description: { type: String, required: true, trim: true },
+    content: { type: String, required: true, trim: true },
     estrellas: { type: Number, enum: [1, 2, 3, 4, 5], trim: true },
   },
   {
