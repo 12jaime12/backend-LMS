@@ -13,6 +13,7 @@ const Review = require("../models/Review.model");
 const Taller = require("../models/Taller.model");
 const Catalogo = require("../models/Catalogo.model");
 const Coche = require("../models/Coche.model");
+const Comentario = require("../models/Comentario.model");
 const PORT = process.env.PORT;
 configCloudinary();
 let confirmationCode = randomCode();
@@ -27,6 +28,7 @@ const registerUser = async (req, res, next) => {
   try {
     const {
       email,
+      apellido,
       name,
       password,
       movil,
@@ -71,7 +73,7 @@ const registerUser = async (req, res, next) => {
         }
       } catch (error) {
         if (req.file) deleteImgCloudinary(imgPosted);
-        return res.status(404).json("Error guardando usuario");
+        return next(error);
       }
     } else {
       if (req.file) deleteImgCloudinary(imgPosted);
@@ -156,13 +158,13 @@ const checkCodeUser = async (req, res, next) => {
         });
       } else {
         await User.findByIdAndDelete(userExist._id);
-        //deleteImgCloudinary(userExist.imagen);
+        deleteImgCloudinary(userExist.imagen);
         return res.status(200).json({
           userExist,
           check: false,
-          delete: (await User.findByIdAndDelete(userExist._id))
-            ? "Codigo erroneo -> usuario borrado"
-            : "fallo al borrar usuario",
+          delete: (await User.findById(userExist._id))
+            ? "fallo al borrar usuario"
+            : "Codigo erroneo -> usuario borrado",
         });
       }
     }
@@ -249,7 +251,7 @@ const forgotPasswordUser = async (req, res, next) => {
     if (userDB) {
       return res.redirect(
         307,
-        `http://localhost:8080/api/v1/user/sendPassword/${userDB._id}`
+        `http://localhost:${PORT}/api/v1/user/sendPassword/${userDB._id}`
       );
     } else {
       return res.status(404).json("El usuario no existe");
@@ -261,11 +263,14 @@ const forgotPasswordUser = async (req, res, next) => {
 //-----------redirect-----------SEND PASSWORD--------------
 //---------------------------------------------------------
 const sendPassword = async (req, res, next) => {
-  console.log("entro");
+  console.log(
+    "entroooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+  );
   let randomPass = randomPassword();
   try {
     const { id } = req.params;
     const userDB = await User.findById(id);
+    console.log("OLDDDD", userDB.password);
     const emailDB = process.env.EMAIL;
     const passDB = process.env.PASSWORD;
 
@@ -279,22 +284,39 @@ const sendPassword = async (req, res, next) => {
     const mailOptions = {
       from: emailDB,
       to: userDB.email,
-      subject: "Confirmation code",
+      subject: "Nuevo codigo de acceso",
       text: `Aquí tienes tu nuevo codigo de acceso: ${randomPass}`,
     };
-    transporter.sendMail(mailOptions, function (error, info) {
+    transporter.sendMail(mailOptions, async function (error, info) {
       if (error) {
         console.log(error);
         return res.status(404).json({
           user: userDB,
-          confirmationCode: "error enviando email. Reenviar codigo",
+          pass: "error enviando email. Reenviar pass",
         });
       } else {
         console.log("Email sent: " + info.response);
-        return res.status(200).json({
-          user: userDB,
-          confirmationCode: userDB.confirmationCode,
-        });
+        try {
+          const newPassword = bcrypt.hashSync(randomPass, 10);
+          await User.findByIdAndUpdate(id, { password: newPassword });
+          const userUpdate = await User.findById(id);
+          console.log(newPassword);
+          console.log(userUpdate.password);
+
+          if (bcrypt.compareSync(randomPass, userUpdate.password)) {
+            return res.status(200).json({
+              userUpdate: true,
+              passUpdate: true,
+            });
+          } else {
+            return res.status(404).json({
+              userUpdate: false,
+              passUpdate: false,
+            });
+          }
+        } catch (error) {
+          return next(error);
+        }
       }
     });
   } catch (error) {
@@ -305,11 +327,16 @@ const sendPassword = async (req, res, next) => {
 //-----------------------------------------------------------
 const changePasswordUser = async (req, res, next) => {
   try {
+    console.log(req.user);
     const { password, newPassword } = req.body;
     const { _id } = req.user;
+    const userToChange = await User.findById(_id);
+    console.log(userToChange.password);
+    /* const { id } = req.user;
+    console.log(id); */
 
-    if (bcrypt.compareSync(password, req.user.password)) {
-      const newPassEncryp = bcrypt.hashSync(newPassword);
+    if (bcrypt.compareSync(password, userToChange.password)) {
+      const newPassEncryp = bcrypt.hashSync(newPassword, 10);
 
       try {
         await User.findByIdAndUpdate(_id, { password: newPassEncryp });
@@ -349,7 +376,7 @@ const updateUser = async (req, res, next) => {
       pais,
       genero,
     } = req.body;
-    const { imagen } = req?.file?.path;
+    const newImagen = req?.file?.path;
     const userUpdate = await User.findById(_id);
 
     if (!userUpdate) {
@@ -363,7 +390,7 @@ const updateUser = async (req, res, next) => {
       provincia && (userUpdate.provincia = provincia);
       pais && (userUpdate.pais = pais);
       genero && (userUpdate.genero = genero);
-      imagen && (userUpdate.imagen = imagen);
+      newImagen && (userUpdate.imagen = newImagen);
     }
     try {
       const updatedUser = await userUpdate.save();
@@ -384,14 +411,15 @@ const updateUser = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const { _id } = req.user;
-    const userDelete = await User.findById(userDelete);
+    const userDelete = await User.findById(_id);
     const arrayCocheCliente = userDelete.coche_cliente;
     const arrayCocheTienda = userDelete.coche_tienda;
     const arrayReviews = userDelete.review_coche;
     const arrayTalleres = userDelete.taller;
+    const arrayComentarios = userDelete.comentario;
 
     await User.findByIdAndDelete(_id);
-    if (userDelete) {
+    if (!userDelete) {
       return res.status(404).json("No se ha podido borrar el usuario");
     } else {
       //recorremos el array de los talleres y PULLEAMOS el usuario, ya que no queremos eliminar el taller
@@ -413,6 +441,9 @@ const deleteUser = async (req, res, next) => {
       //recorremos el array de las review y BORRAMOS la review
       arrayReviews.forEach(async (elem) => {
         await Review.findByIdAndDelete(elem);
+      });
+      arrayComentarios.forEach(async (elem) => {
+        await Comentario.findByIdAndDelete(elem);
       });
 
       return res.status(200).json("Usuario borrado correctamente");

@@ -2,13 +2,15 @@ const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const dotenv = require("dotenv");
+const User = require("../api/models/User.model");
+
 dotenv.config();
 
 //Creamos el almacen
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "Hotel Calpe",
+    folder: "Legendary MotorSport",
     allowedFormats: ["jpg", "png", "jpeg", "gif", "svg", "webp"],
   },
 });

@@ -1,4 +1,4 @@
-const User = require("../api/models/User.models");
+const User = require("../api/models/User.model");
 const { verifyToken } = require("../utils/token");
 const dotenv = require("dotenv");
 dotenv.config();
