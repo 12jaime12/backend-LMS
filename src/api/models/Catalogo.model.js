@@ -8,6 +8,7 @@ const CatalogoSchema = new mongoose.Schema(
     precio: { type: Number, required: true, trim: true },
     llantas: { type: Number, required: true, trim: true },
     motor: { type: Number, required: true, trim: true },
+    rol: { type: String, enum: ["base", "personalizado"], default: "base" },
     combustible: {
       type: String,
       enum: ["diesel", "gasolina", "hibrido", "electrico"],

@@ -10,6 +10,7 @@ const {
   addInteresado,
   addLike,
   getByLike,
+  getAllBase,
 } = require("../controllers/Catalogo.controller");
 
 const CatalogoRoutes = express.Router();
@@ -19,5 +20,6 @@ CatalogoRoutes.delete("/delete/:id", [isAuthClient], deleteCar);
 CatalogoRoutes.patch("/updateCatalogo/:id", [isAuthClient], updateCar);
 CatalogoRoutes.get("/getMarca/:marca", [isAuthClient], getByMarca);
 CatalogoRoutes.get("/getModelo/:modelo", [isAuthClient], getByModelo);
-
+CatalogoRoutes.post("/like/:id", [isAuthClient], addLike);
+CatalogoRoutes.get("/getAllBase", getAllBase);
 module.exports = CatalogoRoutes;

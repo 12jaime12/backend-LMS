@@ -9,8 +9,7 @@ const createCatalogo = async (req, res, next) => {
 
     try {
       const catalogo = await newCatalogo.save();
-      const user = await User.findById(req.user._id);
-      await user.updateOne({ $push: { coche_tienda: catalogo._id } });
+
       return res.status(200).json(catalogo);
     } catch (error) {
       return next(error);
@@ -41,6 +40,13 @@ const deleteCar = async (req, res, next) => {
 //--------------update---------------------
 const updateCar = async (req, res, next) => {
   try {
+    const { id } = req.params;
+    const catalogo = await Catalogo.findById(id);
+    const newCatalogo = new Catalogo(req.body);
+
+    newCatalogo._id = catalogo._id;
+    newCatalogo.marca = catalogo.marca;
+    newCatalogo.modelo;
   } catch (error) {
     return next(error);
   }
@@ -86,10 +92,25 @@ const getByModelo = async (req, res, next) => {
     return next(error);
   }
 };
+//-------------get-all-base----------------
+const getAllBase = async (req, res, next) => {
+  try {
+    const allBase = await Catalogo.find({ rol: "base" });
+    if (allBase) {
+      return res.status(200).json(allBase);
+    } else {
+      return res.status(404).json("error al conseguir todos los coches base");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------------add-interesado-------------
 const addInteresado = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; //idCatalogo personalizado
+    const catalogo = await Catalogo.findById(id);
+    const user = await User.findById(req.user_id);
   } catch (error) {
     return next(error);
   }
@@ -97,6 +118,26 @@ const addInteresado = async (req, res, next) => {
 //--------------add-like-------------------
 const addLike = async (req, res, next) => {
   try {
+    const { id } = req.params; //catalogo
+    const catalogo = await Catalogo.findById(id);
+    const user = await User.findById(req.user._id);
+    if (!catalogo.like.includes(req.user._id)) {
+      await catalogo.updateOne({
+        $push: { like: req.user._id },
+      });
+      await user.updateOne({
+        $push: { like_coche: id },
+      });
+      return res.status(200).json("like añadido");
+    } else {
+      await catalogo.updateOne({
+        $pull: { like: req.user._id },
+      });
+      await user.updateOne({
+        $pull: { like_coche: id },
+      });
+      return res.status(200).json("like eliminado");
+    }
   } catch (error) {
     return next(error);
   }
@@ -119,4 +160,5 @@ module.exports = {
   addInteresado,
   addLike,
   getByLike,
+  getAllBase,
 };
