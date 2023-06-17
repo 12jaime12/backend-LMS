@@ -9,7 +9,7 @@ dotenv.config();
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "Legendary Motorsport",
+    folder: "legendaryMotorsport",
     allowedFormats: ["jpg", "png", "jpeg", "gif", "svg", "webp"],
   },
 });

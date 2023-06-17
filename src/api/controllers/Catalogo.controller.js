@@ -3,21 +3,20 @@ const Catalogo = require("../models/Catalogo.model");
 const User = require("../models/User.model");
 
 //--------------create-car-----------------
-// const createCatalogo = async (req, res, next) => {
-//   try {
-//     const newCatalogo = new Catalogo(req.body);
+const createCatalogo = async (req, res, next) => {
+  try {
+    const newCatalogo = new Catalogo(req.body);
 
-//     const user = await User.findById(_id);
-//     try {
-//       const catalogo = await newCatalogo.save();
-
-//     } catch (error) {
-//       return next(error);
-//     }
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
+    const user = await User.findById(_id);
+    try {
+      const catalogo = await newCatalogo.save();
+    } catch (error) {
+      return next(error);
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------------delete-car-----------------
 const deleteCar = async (req, res, next) => {
   try {
