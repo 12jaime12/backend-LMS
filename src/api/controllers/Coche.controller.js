@@ -87,13 +87,13 @@ const updateCoche = async (req, res, next) => {
     const { precio } = req.body;
 
     const cocheUpdate = await Coche.findByIdAndUpdate(id, { precio: precio });
-    console.log(cocheUpdate);
     const cocheYaUpdate = await Coche.findById(id);
+    console.log(cocheYaUpdate.precio);
 
-    if (cocheYaUpdate.precio === precio) {
+    if (cocheYaUpdate.precio == precio) {
       return res.status(200).json({
         test: "precio actualizado",
-        cocheUpdate,
+        cocheYaUpdate,
       });
     } else {
       return res
