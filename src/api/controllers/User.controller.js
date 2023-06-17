@@ -472,10 +472,8 @@ const getAllUser = async (req, res, next) => {
 //-----------------------------------------------------------
 const getIdUser = async (req, res, next) => {
   try {
-    const { _id } = req.params;
-    const userById = await User.findById(_id).populate(
-      "comentario coche_cliente coche_tienda taller review"
-    );
+    const { id } = req.params;
+    const userById = await User.findById(id);
     if (userById) {
       return res.status(200).json(userById);
     } else {

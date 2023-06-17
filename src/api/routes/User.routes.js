@@ -36,6 +36,6 @@ UserRoutes.patch("/changePassword", [isAuth], changePasswordUser);
 UserRoutes.patch("/updateUser", [isAuth], updateUser);
 UserRoutes.delete("/deleteUser", [isAuth], deleteUser);
 UserRoutes.get("/", getAllUser);
-UserRoutes.get("/:id", getIdUser);
+UserRoutes.get("/id/:id", getIdUser);
 
 module.exports = UserRoutes;

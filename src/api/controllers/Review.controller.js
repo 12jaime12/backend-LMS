@@ -14,7 +14,7 @@ const createReview = async (req, res, next) => {
     const { id } = req.params; //id del coche que la recibe por parametros desde la url al entrar a la pagina del coche
     const { content, estrellas } = req.body;
     const { _id } = req.user;
-
+    console.log(id);
     const userReview = await User.findById(_id);
     const cocheReview = await Catalogo.findById(id);
 
@@ -32,8 +32,11 @@ const createReview = async (req, res, next) => {
         const saveReview = newReview.save();
 
         if (saveReview) {
-          await userReview.updateOne({ $push: { review: newReview._id } });
-          await cocheReview.updateOne({ $push: { review: newReview._id } });
+          await userReview.updateOne({
+            $push: { review_coche: newReview._id },
+          });
+          await cocheReview.updateOne({ $push: { reviews: newReview._id } });
+          return res.status(200).json("Review creada correctamente");
         } else {
           return res
             .status(404)
@@ -53,7 +56,7 @@ const deleteReview = async (req, res, next) => {
   try {
     const { id } = req.params; //id de la review que la recibe por parametros al llamar a la funcion en el front
     const { _id } = req.user;
-    const deleteReview = await Review.findById(id);
+    const deleteReview = await Review.findByIdAndDelete(id);
     const userReview = await User.findById(_id);
 
     if (!deleteReview) {
@@ -68,6 +71,7 @@ const deleteReview = async (req, res, next) => {
       await Catalogo.findByIdAndUpdate(idCoche, {
         $pull: { reviews: id },
       });
+      return res.status(200).json("Review borrada correctamente");
     }
   } catch (error) {
     return next(error);
@@ -138,10 +142,26 @@ const getReviewByDni = async (req, res, next) => {
   }
 };
 
+//-------------------GET ALL----------------------------
+const getAllReview = async (req, res, next) => {
+  try {
+    const allReviews = await Review.find();
+
+    if (allReviews) {
+      return res.status(200).json(allReviews);
+    } else {
+      return res.status(404).json("no hay ninguna review creada");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   createReview,
   deleteReview,
   mediaPuntuacionReview,
   getReviewByDni,
   getReviewCatalogo,
+  getAllReview,
 };

@@ -12,10 +12,10 @@ const createCoche = async (req, res, next) => {
     const { _id } = req.user;
     const cocheImg = req?.file?.path;
     const user = await User.findById(_id);
-    console.log("user", user);
+
     const newCoche = new Coche({ ...req.body, cliente: user._id });
     cocheImg && (newCoche.imagen = cocheImg);
-    console.log(" NEW COCHEEEEEE -------", newCoche);
+
     try {
       const coche = await newCoche.save();
       if (!coche) {
@@ -163,6 +163,16 @@ const addInteresado = async (req, res, next) => {
     const { _id } = req.user;
     const user = await User.findById(_id);
     const coche = await Coche.findById(id);
+
+    if (!user.intereses.includes(id)) {
+      await user.updateOne({ $push: { intereses: id } });
+      await coche.updateOne({ $push: { interesados: _id } });
+      return res.status(200).json("Coche añadido a los intereses del user");
+    } else {
+      await user.updateOne({ $pull: { intereses: id } });
+      await coche.updateOne({ $pull: { interesados: _id } });
+      return res.status(200).json("Coche quitado de los intereses del user");
+    }
   } catch (error) {
     return next(error);
   }
@@ -170,7 +180,7 @@ const addInteresado = async (req, res, next) => {
 //--------------add-like-------------------
 const addLike = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.body;
     const { _id } = req.user;
     const user = await User.findById(_id);
     const coche = await Coche.findById(id);
@@ -178,9 +188,11 @@ const addLike = async (req, res, next) => {
     if (!coche.like.includes(_id)) {
       await coche.updateOne({ $push: { like: _id } });
       await user.updateOne({ push: { coche_like: id } });
+      return res.status(200).json("Like añadido al user");
     } else {
       await coche.updateOne({ $pull: { like: _id } });
       await user.updateOne({ $pull: { like_coche: id } });
+      return res.status(200).json("Like quitado del user");
     }
   } catch (error) {
     return next(error);
@@ -189,6 +201,24 @@ const addLike = async (req, res, next) => {
 //--------------add-taller------------
 const addTaller = async (req, res, next) => {
   try {
+    const { id } = req.body;
+    const { _id } = req.body;
+    const taller = await Taller.findById(_id);
+    const coche = await Coche.findById(id);
+
+    if (coche) {
+      await coche.updateOne({ $push: { taller: _id } });
+      await taller.updateOne({ $push: { coche_reparacion: id } });
+      return res
+        .status(200)
+        .json(
+          `El coche${coche.marca} ha sido añadido al taller ${taller.name}`
+        );
+    } else {
+      return res
+        .status(404)
+        .json("No hay ningun coche ni ningun taller disponible");
+    }
   } catch (error) {
     return next(error);
   }
@@ -196,6 +226,22 @@ const addTaller = async (req, res, next) => {
 //--------------ranking-de-like------------
 const getByLike = async (req, res, next) => {
   try {
+    const allCoches = await Coche.find();
+    //ordenar por allCoches.likes.length
+
+    if (allCoches) {
+      allCoches.forEach((coche, index) => {
+        console.log(coche.like.length);
+        if (coche.like) {
+        }
+      });
+      /* const ordenarArray = likes.sort((a, b) => {
+        return a + b;
+      }); */
+      return res.status(200).json(ordenarArray);
+    } else {
+      return res.status(404).json("No hay coches con likes para ordenar");
+    }
   } catch (error) {
     return next(error);
   }
@@ -208,4 +254,8 @@ module.exports = {
   getByMarca,
   getAllCoche,
   getByModelo,
+  getByLike,
+  addInteresado,
+  addLike,
+  addTaller,
 };
