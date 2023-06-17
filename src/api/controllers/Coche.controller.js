@@ -41,7 +41,7 @@ const deleteCoche = async (req, res, next) => {
     const { id } = req.params;
     const { _id } = req.user;
     const user = await User.findById(_id);
-    const cocheToDelete = await Coche.findById(id);
+    const cocheToDelete = await Coche.findByIdAndDelete(id);
 
     if (!cocheToDelete) {
       return res.status(404).json("Problema al encontrar el coche");
@@ -159,6 +159,10 @@ const getByModelo = async (req, res, next) => {
 //--------------add-interesado-------------
 const addInteresado = async (req, res, next) => {
   try {
+    const { id } = req.params;
+    const { _id } = req.user;
+    const user = await User.findById(_id);
+    const coche = await Coche.findById(id);
   } catch (error) {
     return next(error);
   }
@@ -166,6 +170,18 @@ const addInteresado = async (req, res, next) => {
 //--------------add-like-------------------
 const addLike = async (req, res, next) => {
   try {
+    const { id } = req.params;
+    const { _id } = req.user;
+    const user = await User.findById(_id);
+    const coche = await Coche.findById(id);
+
+    if (!coche.like.includes(_id)) {
+      await coche.updateOne({ $push: { like: _id } });
+      await user.updateOne({ push: { coche_like: id } });
+    } else {
+      await coche.updateOne({ $pull: { like: _id } });
+      await user.updateOne({ $pull: { like_coche: id } });
+    }
   } catch (error) {
     return next(error);
   }
