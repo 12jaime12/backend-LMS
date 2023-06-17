@@ -27,13 +27,15 @@ const TallerRoutes = require("./src/api/routes/Taller.routes");
 const UserRoutes = require("./src/api/routes/user.routes");
 const ReviewRoutes = require("./src/api/routes/Review.routes");
 const CocheRoutes = require("./src/api/routes/Coche.routes");
+const CatalogoRoutes = require("./src/api/routes/Catalogo.routes");
+
 //Nos importamos las rutas y las enlazamos a nuestra ruta principal mas el añadido de /api/v1 por medio de app.use()
 app.use("/api/v1/user/", UserRoutes);
 app.use("/api/v1/taller/", TallerRoutes);
 app.use("/api/v1/review/", ReviewRoutes);
 app.use("/api/v1/comentarios/", ComentariosRoutes);
 app.use("/api/v1/coche/", CocheRoutes);
-
+app.use("/api/v1/catalogo/", CatalogoRoutes);
 // app.use('*', (req, res, next) => {
 //   const error = new Error('Route not found');
 //   error.status = 404;

@@ -88,20 +88,17 @@ const updateCoche = async (req, res, next) => {
 
     const cocheUpdate = await Coche.findByIdAndUpdate(id, { precio: precio });
     console.log(cocheUpdate);
-    try {
-      const cocheSave = await cocheUpdate.save();
-      if (cocheSave) {
-        return res.status(200).json({
-          test: "precio actualizado",
-          cocheSave,
-        });
-      } else {
-        return res
-          .status(404)
-          .json("El precio del coche no se ha podido actualizar");
-      }
-    } catch (error) {
-      return next(error);
+    const cocheYaUpdate = await Coche.findById(id);
+
+    if (cocheYaUpdate.precio === precio) {
+      return res.status(200).json({
+        test: "precio actualizado",
+        cocheUpdate,
+      });
+    } else {
+      return res
+        .status(404)
+        .json("El precio del coche no se ha podido actualizar");
     }
   } catch (error) {
     return next(error);

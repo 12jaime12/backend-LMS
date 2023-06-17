@@ -3,27 +3,33 @@ const Catalogo = require("../models/Catalogo.model");
 const User = require("../models/User.model");
 
 //--------------create-car-----------------
-// const createCatalogo = async (req, res, next) => {
-//   try {
-//     const newCatalogo = new Catalogo(req.body);
+const createCatalogo = async (req, res, next) => {
+  try {
+    const newCatalogo = new Catalogo(req.body);
 
-//     const user = await User.findById(_id);
-//     try {
-//       const catalogo = await newCatalogo.save();
-
-//     } catch (error) {
-//       return next(error);
-//     }
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
+    try {
+      const catalogo = await newCatalogo.save();
+      const user = await User.findById(req.user._id);
+      await user.updateOne({ $push: { coche_tienda: catalogo._id } });
+      return res.status(200).json(catalogo);
+    } catch (error) {
+      return next(error);
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------------delete-car-----------------
 const deleteCar = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const catalogoToDelete = await Catalogo.findById(id);
     const catalogo = await Catalogo.findByIdAndDelete(id);
     if (catalogo) {
+      catalogoToDelete.comentario.forEach(async (element) => {
+        await Comentario.findByIdAndDelete(element);
+      });
+
       return res.status(200).json("ok borrado");
     } else {
       return res.status(404).json("error al borrar");
@@ -80,13 +86,6 @@ const getByModelo = async (req, res, next) => {
     return next(error);
   }
 };
-//--------------get-by-potencia------------
-// const getByPotencia = async (req, res, next) => {
-//   try {
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
 //--------------add-interesado-------------
 const addInteresado = async (req, res, next) => {
   try {
@@ -108,4 +107,16 @@ const getByLike = async (req, res, next) => {
   } catch (error) {
     return next(error);
   }
+};
+
+module.exports = {
+  createCatalogo,
+  deleteCar,
+  updateCar,
+  getAll,
+  getByMarca,
+  getByModelo,
+  addInteresado,
+  addLike,
+  getByLike,
 };
