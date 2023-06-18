@@ -26,20 +26,7 @@ const registerUser = async (req, res, next) => {
   //1)Buscamos si el usuario existe. 2)Creamos un nuevo User. 3)Guardamos el user. 4)Enviamos correo con el codigo. 5)Gestionamos errores en el back
   console.log("puerto", PORT);
   try {
-    const {
-      email,
-      apellido,
-      name,
-      password,
-      movil,
-      dni,
-      direccion,
-      ciudad,
-      provincia,
-      pais,
-      genero,
-      imagen,
-    } = req.body;
+    const { email, dni } = req.body;
     await User.syncIndexes();
 
     let imgPosted = req?.file?.path;
@@ -65,9 +52,7 @@ const registerUser = async (req, res, next) => {
             307,
             `http://localhost:${PORT}/api/v1/user/register/sendEmail/${saveUser.id}`
           );
-          //----------------------->ENVIAR MAIL CON CODIGO DE CONFIRMACION<--------------------------------
-          //----------------------->ENVIAR MAIL CON CODIGO DE CONFIRMACION<--------------------------------
-          //----------------------->ENVIAR MAIL CON CODIGO DE CONFIRMACION<--------------------------------
+          //ENVIAMOS EL CODIGO DE CONFIRMACION MEDIANTE REDIRECT Y CON UNA FUNCION sendEmail() QUE LA TENEMOS AQUI ABAJO
         } else {
           return res.status(404).json("error al enviar el correo");
         }
@@ -81,7 +66,7 @@ const registerUser = async (req, res, next) => {
     }
   } catch (error) {
     if (req.file) deleteImgCloudinary(imgPosted);
-    return res.status(500).json("Falta el email y/o dni"); //ERROR 500 -> Este seria un error general en el proceso de registro (fallo servidor..etc)
+    return next(error);
   }
 };
 
@@ -149,12 +134,14 @@ const checkCodeUser = async (req, res, next) => {
             .status(404)
             .json("No se ha podido actualizar el usuario", res.message);
         }
+
+        //VOLVEMOS A BUSCAR AL USUARIO PARA VER SI SE HA ACTUALIZADO EL check Y ASI ENVIAR UNA RESPUESTA AL FRONT.
         const updateUser = await User.findOne({ email });
-        console.log("userexist", userExist);
         return res.status(200).json({
           testCheck: updateUser.check === true ? true : false,
           updateUser,
         });
+        //SI LOS CODIGOS NO COINCIDEN SE BORRA EL USUARIO AUTOMATICAMENTE
       } else {
         await User.findByIdAndDelete(userExist._id);
         deleteImgCloudinary(userExist.imagen);
@@ -174,6 +161,7 @@ const checkCodeUser = async (req, res, next) => {
 //--------3-----------RESEND CODE----------------------------
 //-----------------------------------------------------------
 const resendCodeUser = async (req, res, next) => {
+  //RESEND CODE ENVIARÁ NUEVAMENTE LA FUNCION sendEmail() POR MEDIO DE UN REDIRECT
   try {
     const { email } = req.body;
     const userToSendCode = await User.findOne({ email });
@@ -262,9 +250,6 @@ const forgotPasswordUser = async (req, res, next) => {
 //-----------redirect-----------SEND PASSWORD--------------
 //---------------------------------------------------------
 const sendPassword = async (req, res, next) => {
-  console.log(
-    "entroooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
-  );
   let randomPass = randomPassword();
   try {
     const { id } = req.params;
@@ -330,9 +315,6 @@ const changePasswordUser = async (req, res, next) => {
     const { password, newPassword } = req.body;
     const { _id } = req.user;
     const userToChange = await User.findById(_id);
-    console.log(userToChange.password);
-    /* const { id } = req.user;
-    console.log(id); */
 
     if (bcrypt.compareSync(password, userToChange.password)) {
       const newPassEncryp = bcrypt.hashSync(newPassword, 10);
@@ -378,6 +360,8 @@ const updateUser = async (req, res, next) => {
     const newImagen = req?.file?.path;
     const userUpdate = await User.findById(_id);
 
+    //CREAMOS TODAS ESTAS POSIBILIDADES PARA ACTUALIZAR SOLAMENTE LOS CAMPOS QUE NOS HAYA INTRODUCIDO INFORMACION. POR EJEMPLO: SI SOLO
+    //INTRODUCE CAMBIOS EN EL movil Y ciudad SOLO SE ACTUALIZA LA INFORMACION DEL USUARIO DEL MOVIL Y LA CIUDAD
     if (!userUpdate) {
       return res.status(404).json("Usuario no encontrado");
     } else {
@@ -422,7 +406,6 @@ const deleteUser = async (req, res, next) => {
     if (!userDelete) {
       return res.status(404).json("No se ha podido borrar el usuario");
     } else {
-      console.log("booooooorrraaaaaarrrrr", userDelete.imagen);
       deleteImgCloudinary(userDelete.imagen);
       //recorremos el array de los talleres y PULLEAMOS el usuario, ya que no queremos eliminar el taller
       arrayTalleres.forEach(async (elem) => {
@@ -472,10 +455,8 @@ const getAllUser = async (req, res, next) => {
 //-----------------------------------------------------------
 const getIdUser = async (req, res, next) => {
   try {
-    const { _id } = req.params;
-    const userById = await User.findById(_id).populate(
-      "comentario coche_cliente coche_tienda taller review"
-    );
+    const { id } = req.params;
+    const userById = await User.findById(id);
     if (userById) {
       return res.status(200).json(userById);
     } else {
