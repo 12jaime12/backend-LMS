@@ -13,6 +13,7 @@ const createCoche = async (req, res, next) => {
     const cocheImg = req?.file?.path;
     const user = await User.findById(_id);
 
+    //CREAMOS EL COCHE CON LOS DATOS INTRODUCIDOS POR req.body Y LE AÑADIMOS EL CLIENTE QUE HA CREADO ESE COCHE
     const newCoche = new Coche({ ...req.body, cliente: user._id });
     cocheImg && (newCoche.imagen = cocheImg);
 
@@ -23,7 +24,7 @@ const createCoche = async (req, res, next) => {
           .status(404)
           .json("El coche no se ha guardado en la BBDD correctamente");
       } else {
-        //await coche.updateOne({ $push: { cliente: user._id } });
+        //AQUI AÑADIMOS AL USUARIO EL COCHE QUE ACABA DE CREAR
         await user.updateOne({ $push: { coche_cliente: coche._id } });
         return res.status(200).json(coche);
       }
@@ -88,8 +89,8 @@ const updateCoche = async (req, res, next) => {
 
     const cocheUpdate = await Coche.findByIdAndUpdate(id, { precio: precio });
     const cocheYaUpdate = await Coche.findById(id);
-    console.log(cocheYaUpdate.precio);
 
+    //ACTUALIZAMOS EL COCHE Y COMPROBAMOS MEDIANTE EL PRECIO (ya que es el unico campo que se puede actualizr) SI SE HA ACTUALIZADO BIEN.
     if (cocheYaUpdate.precio == precio) {
       return res.status(200).json({
         test: "precio actualizado",
@@ -164,6 +165,8 @@ const addInteresado = async (req, res, next) => {
     const user = await User.findById(_id);
     const coche = await Coche.findById(id);
 
+    //AÑADIMOS EL INTERESADO TANTO AL COCHE COMO AL CLIENTE, Y EN CASO DE QUE YA SE ESTE INTERESADO LO QUITAMOS DE AMBOS DE SITIOS
+    //FUNCIONA IGUAL QUE EL LIKE-> si le das una vez le das like y te lo guarda, si le das dos veces te quita el like
     if (!user.intereses.includes(id)) {
       await user.updateOne({ $push: { intereses: id } });
       await coche.updateOne({ $push: { interesados: _id } });
@@ -185,6 +188,8 @@ const addLike = async (req, res, next) => {
     const user = await User.findById(_id);
     const coche = await Coche.findById(id);
 
+    //SI EL USUARIO LE DA LIKE Y TODAVIA NO LO TIENE GUARDADO, SE GUARDA EN AMBOS CAMPOS TANTO EN USER COMO EN COCHE Y EN CASO CONTRARIO,
+    //DE QUE YA TENGA EL LIKE DEL COCHE SE LE QUITA A AMBOS CAMPOS TAMBIEN
     if (!coche.like.includes(_id)) {
       await coche.updateOne({ $push: { like: _id } });
       await user.updateOne({ $push: { like_coche: id } });
@@ -206,6 +211,7 @@ const addTaller = async (req, res, next) => {
     const taller = await User.findById(idTaller);
     const coche = await Coche.findById(idCoche);
 
+    //AÑADIMOS EL COCHE AL TALLER Y AL USUARIO-TALLER LE AÑADIMOS EL COCHE
     if (coche) {
       await coche.updateOne({ $push: { taller: idTaller } });
       await taller.updateOne({ $push: { coche_reparacion: idCoche } });
