@@ -28,6 +28,8 @@ const createReview = async (req, res, next) => {
         estrellas: estrellas,
       });
 
+      //CREAMOS LA REVIEW CON LA INFORMACION DE LA req.body Y ACTUALIZAMOS LA INFORMACION DEL USER, YA QUE EN SU CLAVE review_coche
+      //HAY QUE PUSHEARLE LA REVIEW QUE ACABA DE CREAR
       try {
         const saveReview = newReview.save();
 
@@ -59,6 +61,8 @@ const deleteReview = async (req, res, next) => {
     const deleteReview = await Review.findByIdAndDelete(id);
     const userReview = await User.findById(_id);
 
+    //SI BORRAMOS UNA REVIEW HAY QUE QUITARLA DEL USUARIO Y DEL COCHE DEL CATALOGO, CON LO CUAL HACEMOS UN pull DE LAS CLAVES
+    //USER-> review_coche Y CATALOGO-> reviews PARA BORRAR LA REVIEW DE AMBOS SITIOS
     if (!deleteReview) {
       return res.status(404).json("Problema con la review. No existe");
     } else {
@@ -84,6 +88,8 @@ const mediaPuntuacionReview = async (req, res, next) => {
     const { id } = req.params;
     const coche = await Catalogo.findById(id);
 
+    //BUSCAMOS EL COCHE DEL QUE QUEREMOS OBTENER LA MEDIA DE PUNTUACION, CREAMOS UNA VARIABLE DONDE ALMACENAREMOS LA SUMA TOTAL DE TODAS
+    //LAS PUNTUACIONES QUE EXISTEN EN ESE COCHE Y DESPUES LO DIVIDIMOS ENTRE EL NUMERO DE PUNTUACIONES PARA ASI OBTENER LA MEDIA
     if (!coche) {
       return res.status(404).json("Error al cargar el coche");
     } else {

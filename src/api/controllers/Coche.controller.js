@@ -159,7 +159,7 @@ const getByModelo = async (req, res, next) => {
 //--------------add-interesado-------------
 const addInteresado = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.body;
     const { _id } = req.user;
     const user = await User.findById(_id);
     const coche = await Coche.findById(id);
@@ -187,7 +187,7 @@ const addLike = async (req, res, next) => {
 
     if (!coche.like.includes(_id)) {
       await coche.updateOne({ $push: { like: _id } });
-      await user.updateOne({ push: { coche_like: id } });
+      await user.updateOne({ $push: { like_coche: id } });
       return res.status(200).json("Like añadido al user");
     } else {
       await coche.updateOne({ $pull: { like: _id } });
@@ -201,14 +201,14 @@ const addLike = async (req, res, next) => {
 //--------------add-taller------------
 const addTaller = async (req, res, next) => {
   try {
-    const { id } = req.body;
-    const { _id } = req.body;
-    const taller = await Taller.findById(_id);
-    const coche = await Coche.findById(id);
+    const { idCoche } = req.body;
+    const { idTaller } = req.body;
+    const taller = await User.findById(idTaller);
+    const coche = await Coche.findById(idCoche);
 
     if (coche) {
-      await coche.updateOne({ $push: { taller: _id } });
-      await taller.updateOne({ $push: { coche_reparacion: id } });
+      await coche.updateOne({ $push: { taller: idTaller } });
+      await taller.updateOne({ $push: { coche_reparacion: idCoche } });
       return res
         .status(200)
         .json(
@@ -227,18 +227,26 @@ const addTaller = async (req, res, next) => {
 const getByLike = async (req, res, next) => {
   try {
     const allCoches = await Coche.find();
-    //ordenar por allCoches.likes.length
-
+    const arrayLikesOrdenado = [];
+    let aux = 0;
     if (allCoches) {
+      //CREAMOS UN BUCLE QUE LO PRIMERO QUE HACE ES PUSHEARNOS CADA UNO DE LOS COCHES A UN ARRAY VACIO, Y DESPUES MEDIANTE UNA CONDICION
+      //EVALUAMOS CUAL DE LOS COCHES TIENE MAYOR NUMERO DE LIKES PARA POSICIONARLO EN UN SITIO U OTRO DEL ARRAY, ASI NOS LO ORDENARÁ DE
+      //MAYOR A MENOR NUMERO DE LIKES
       allCoches.forEach((coche, index) => {
-        console.log(coche.like.length);
-        if (coche.like) {
+        arrayLikesOrdenado.push(coche);
+        if (
+          arrayLikesOrdenado[index]?.like?.length >
+          arrayLikesOrdenado[index - 1]?.like?.length
+        ) {
+          aux = coche;
+          arrayLikesOrdenado[index] = arrayLikesOrdenado[index - 1];
+          arrayLikesOrdenado[index - 1] = aux;
         }
       });
-      /* const ordenarArray = likes.sort((a, b) => {
-        return a + b;
-      }); */
-      return res.status(200).json(ordenarArray);
+
+      console.log(arrayLikesOrdenado);
+      return res.status(200).json(arrayLikesOrdenado);
     } else {
       return res.status(404).json("No hay coches con likes para ordenar");
     }

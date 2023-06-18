@@ -42,11 +42,11 @@ const TallerSchema = new Schema(
     provincia: { type: String, required: true, trim: true },
     rol: { type: String, default: "taller" },
 
-    cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+    cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     mecanico: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-    coche_reparacion: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-    coche_terminado: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
+    coche_reparacion: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coche" }],
+    coche_terminado: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coche" }],
+    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
   },
   {
     timestamps: true,
