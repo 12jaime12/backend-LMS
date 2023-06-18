@@ -8,6 +8,7 @@ const CatalogoSchema = new mongoose.Schema(
     precio: { type: Number, required: true, trim: true },
     llantas: { type: Number, required: true, trim: true },
     motor: { type: Number, required: true, trim: true },
+    year: { type: Number, required: true, trim: true },
     rol: { type: String, enum: ["base", "personalizado"], default: "base" },
     combustible: {
       type: String,
@@ -19,6 +20,7 @@ const CatalogoSchema = new mongoose.Schema(
     reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reviews" }],
     comentario: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentario" }],
     like: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    interesados: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   {
     timestamps: true,

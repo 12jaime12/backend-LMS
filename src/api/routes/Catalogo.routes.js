@@ -1,5 +1,8 @@
 const express = require("express");
-const { isAuthClient } = require("../../middleware/auth.middleware");
+const {
+  isAuthClient,
+  isAuthAdmin,
+} = require("../../middleware/auth.middleware");
 const {
   createCatalogo,
   deleteCar,
@@ -15,7 +18,7 @@ const {
 
 const CatalogoRoutes = express.Router();
 
-CatalogoRoutes.post("/create", [isAuthClient], createCatalogo);
+CatalogoRoutes.post("/create", [isAuthAdmin], createCatalogo);
 CatalogoRoutes.delete("/delete/:id", [isAuthClient], deleteCar);
 CatalogoRoutes.patch("/updateCatalogo/:id", [isAuthClient], updateCar);
 CatalogoRoutes.get("/getMarca/:marca", [isAuthClient], getByMarca);

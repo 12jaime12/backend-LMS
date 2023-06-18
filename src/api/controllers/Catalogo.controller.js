@@ -42,11 +42,16 @@ const updateCar = async (req, res, next) => {
   try {
     const { id } = req.params;
     const catalogo = await Catalogo.findById(id);
-    const newCatalogo = new Catalogo(req.body);
+    console.log(catalogo);
+    const newCatalogo = new Catalogo(catalogo, req.body);
+    console.log("hola", newCatalogo);
+    // newCatalogo.marca = catalogo.marca;
+    // newCatalogo.modelo = catalogo.modelo;
+    // newCatalogo.rol = "personalizado";
 
-    newCatalogo._id = catalogo._id;
-    newCatalogo.marca = catalogo.marca;
-    newCatalogo.modelo;
+    const CatalogoSave = await newCatalogo.save();
+    console.log("save", CatalogoSave);
+    return res.status(200).json(CatalogoSave);
   } catch (error) {
     return next(error);
   }
@@ -111,6 +116,23 @@ const addInteresado = async (req, res, next) => {
     const { id } = req.params; //idCatalogo personalizado
     const catalogo = await Catalogo.findById(id);
     const user = await User.findById(req.user_id);
+    if (!catalogo.interesados.includes(req.user_id)) {
+      await catalogo.updateOne({
+        $push: { interesados: req.user._id },
+      });
+      await user.updateOne({
+        $push: { intereses: id },
+      });
+      return res.status(200).json("Añadido a interesados");
+    } else {
+      await catalogo.updateOne({
+        $pull: { interesados: req.user._id },
+      });
+      await user.updateOne({
+        $pull: { intereses: id },
+      });
+      return res.status(200).json("Eliminado de interesados");
+    }
   } catch (error) {
     return next(error);
   }
@@ -145,6 +167,29 @@ const addLike = async (req, res, next) => {
 //--------------ranking-de-like------------
 const getByLike = async (req, res, next) => {
   try {
+    const allCatalogo = await Catalogo.find({ rol: "base" });
+    const arrayLikesOrdenado = [];
+    let aux = 0;
+    if (allCoches) {
+      //CREAMOS UN BUCLE QUE LO PRIMERO QUE HACE ES PUSHEARNOS CADA UNO DE LOS COCHES A UN ARRAY VACIO, Y DESPUES MEDIANTE UNA CONDICION
+      //EVALUAMOS CUAL DE LOS COCHES TIENE MAYOR NUMERO DE LIKES PARA POSICIONARLO EN UN SITIO U OTRO DEL ARRAY, ASI NOS LO ORDENARÁ DE
+      //MAYOR A MENOR NUMERO DE LIKES
+      allCatalogo.forEach((coche, index) => {
+        arrayLikesOrdenado.push(coche);
+        if (
+          arrayLikesOrdenado[index]?.like?.length >
+          arrayLikesOrdenado[index - 1]?.like?.length
+        ) {
+          aux = coche;
+          arrayLikesOrdenado[index] = arrayLikesOrdenado[index - 1];
+          arrayLikesOrdenado[index - 1] = aux;
+        }
+      });
+
+      return res.status(200).json(arrayLikesOrdenado);
+    } else {
+      return res.status(404).json("No hay coches con likes para ordenar");
+    }
   } catch (error) {
     return next(error);
   }
