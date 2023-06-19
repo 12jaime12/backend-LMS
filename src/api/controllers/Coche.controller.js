@@ -7,15 +7,25 @@ const User = require("../models/User.model");
 //--------------create-coche-----------------
 const createCoche = async (req, res, next) => {
   try {
-    console.log(req.user);
     await Coche.syncIndexes();
     const { _id } = req.user;
-    const cocheImg = req?.file?.path;
+
     const user = await User.findById(_id);
 
+    const arrayAux = [];
+    if (req?.files) {
+      req.files.forEach((element) => {
+        console.log("path", element.path);
+        arrayAux.push(element.path);
+      });
+    }
+    console.log("array", arrayAux);
     //CREAMOS EL COCHE CON LOS DATOS INTRODUCIDOS POR req.body Y LE AÑADIMOS EL CLIENTE QUE HA CREADO ESE COCHE
-    const newCoche = new Coche({ ...req.body, cliente: user._id });
-    cocheImg && (newCoche.imagen = cocheImg);
+    const newCoche = new Coche({
+      ...req.body,
+      cliente: user._id,
+      image: arrayAux,
+    });
 
     try {
       const coche = await newCoche.save();

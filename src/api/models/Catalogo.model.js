@@ -21,6 +21,7 @@ const CatalogoSchema = new mongoose.Schema(
     comentario: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentario" }],
     like: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     interesados: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    image: { type: Array },
   },
   {
     timestamps: true,

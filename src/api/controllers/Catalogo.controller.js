@@ -5,7 +5,14 @@ const User = require("../models/User.model");
 //--------------create-car-----------------
 const createCatalogo = async (req, res, next) => {
   try {
-    const newCatalogo = new Catalogo(req.body);
+    const arrayAux = [];
+    if (req?.files) {
+      req.files.forEach((element) => {
+        console.log("path", element.path);
+        arrayAux.push(element.path);
+      });
+    }
+    const newCatalogo = new Catalogo({ ...req.body, image: arrayAux });
 
     try {
       const catalogo = await newCatalogo.save();

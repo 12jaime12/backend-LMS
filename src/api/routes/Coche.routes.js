@@ -1,4 +1,5 @@
 const { isAuth, isAuthClient } = require("../../middleware/auth.middleware");
+const { upload } = require("../../middleware/files.middleware");
 const {
   createCoche,
   deleteCoche,
@@ -16,7 +17,12 @@ const Coche = require("../models/Coche.model");
 const express = require("express").Router();
 const CocheRoutes = express;
 
-CocheRoutes.post("/createCoche", [isAuthClient], createCoche);
+CocheRoutes.post(
+  "/createCoche",
+  [isAuthClient],
+  upload.array("image", 4),
+  createCoche
+);
 CocheRoutes.post("/addInteresado", [isAuthClient], addInteresado);
 CocheRoutes.post("/addLike", [isAuthClient], addLike);
 CocheRoutes.post("/addTaller", [isAuthClient], addTaller);
