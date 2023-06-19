@@ -36,7 +36,7 @@ const createComent = async (req, res, next) => {
     } else if (variable === "catalogo") {
       const newComentario = new Comentario({
         content: content,
-        Coche: id,
+        Catalogo: id,
         Creador: req.user._id,
         rol: "catalogo",
       });
