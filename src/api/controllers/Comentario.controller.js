@@ -42,20 +42,16 @@ const createComent = async (req, res, next) => {
       });
       try {
         const comentarioSave = await newComentario.save();
-        const comentSave = await Comentario.find({
-          content: content,
-          Coche: id,
-          Creador: req.user._id,
-        });
 
         const catologo = await Catalogo.findById(id);
+
         await catologo.updateOne({
-          $push: { comentario: comentSave._id },
+          $push: { comentario: comentarioSave._id },
         });
 
         const cliente = await User.findById(req.user._id);
         await cliente.updateOne({
-          $push: { comentario: comentSave._id },
+          $push: { comentario: comentarioSave._id },
         });
 
         return res.status(200).json(comentarioSave);
