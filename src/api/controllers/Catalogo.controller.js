@@ -40,18 +40,23 @@ const deleteCar = async (req, res, next) => {
 //--------------update---------------------
 const updateCar = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const catalogo = await Catalogo.findById(id);
-    console.log(catalogo);
-    const newCatalogo = new Catalogo(catalogo, req.body);
-    console.log("hola", newCatalogo);
-    // newCatalogo.marca = catalogo.marca;
-    // newCatalogo.modelo = catalogo.modelo;
-    // newCatalogo.rol = "personalizado";
+    const newCatalogo = new Catalogo(req.body);
 
-    const CatalogoSave = await newCatalogo.save();
-    console.log("save", CatalogoSave);
-    return res.status(200).json(CatalogoSave);
+    newCatalogo.rol = "personalizado";
+    newCatalogo.cliente = req.user._id;
+
+    try {
+      const catalogoSave = await newCatalogo.save();
+
+      const user = await User.findById(req.user._id);
+      await user.updateOne({
+        $push: { coche_tienda: catalogoSave._id },
+      });
+
+      return res.status(200).json(catalogoSave);
+    } catch (error) {
+      return next(error);
+    }
   } catch (error) {
     return next(error);
   }
@@ -89,7 +94,7 @@ const getByModelo = async (req, res, next) => {
     const { modelo } = req.params;
     const catalogoModelo = await Catalogo.find({ modelo: modelo });
     if (catalogoModelo) {
-      return res.status(200).json(catalogoMarca);
+      return res.status(200).json(catalogoModelo);
     } else {
       return res.status(404).json("error al cargar los coches de esa marca");
     }
