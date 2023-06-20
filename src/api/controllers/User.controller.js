@@ -31,7 +31,7 @@ const registerUser = async (req, res, next) => {
 
     let imgPosted = req?.file?.path;
 
-    const findUser = await User.findOne({ email }, { dni }); //--------CREO QUE FUNCIONA BIEN
+    const findUser = await User.findOne({ dni }); //--------CREO QUE FUNCIONA BIEN
     if (!findUser) {
       //creamos el usuario, comprobamos si nos ha enviado una imagen y si no le ponemos una por defecto y lo guardamos
       const newUser = new User({
@@ -62,7 +62,7 @@ const registerUser = async (req, res, next) => {
       }
     } else {
       if (req.file) deleteImgCloudinary(imgPosted);
-      return res.status(404).json("El usuario ya existe.");
+      return res.status(404).json("El usuario ya existe con ese dni.");
     }
   } catch (error) {
     if (req.file) deleteImgCloudinary(imgPosted);
