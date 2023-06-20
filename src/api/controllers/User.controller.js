@@ -117,6 +117,7 @@ const sendEmail = async (req, res, next) => {
 //--------2-----------CHECK CODE-----------------------------
 //-----------------------------------------------------------
 const checkCodeUser = async (req, res, next) => {
+  console.log("BODYYYYYYYY", req.body);
   try {
     const { email, confirmationCode } = req.body;
     const userExist = await User.findOne({ email });
