@@ -167,6 +167,21 @@ const getByModelo = async (req, res, next) => {
   }
 };
 
+//------------get by id-------------------------------
+const getCocheById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const coments = await Coche.findById(id);
+    if (coments) {
+      return res.status(200).json(coments);
+    } else {
+      return res.status(404).json("Error al encontrar los comentarios");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
 //--------------add-interesado-------------
 const addInteresado = async (req, res, next) => {
   try {
@@ -282,4 +297,5 @@ module.exports = {
   addInteresado,
   addLike,
   addTaller,
+  getCocheById,
 };

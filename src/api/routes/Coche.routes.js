@@ -11,6 +11,7 @@ const {
   addInteresado,
   addLike,
   addTaller,
+  getCocheById,
 } = require("../controllers/Coche.controller");
 const Coche = require("../models/Coche.model");
 
@@ -32,4 +33,5 @@ CocheRoutes.get("/marca/:marca", getByMarca);
 CocheRoutes.get("/modelo/:modelo", getByModelo);
 CocheRoutes.get("/", getAllCoche);
 CocheRoutes.get("/likes", getByLike);
+CocheRoutes.get("/coche/:id", getCocheById);
 module.exports = CocheRoutes;

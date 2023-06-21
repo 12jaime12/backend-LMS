@@ -32,7 +32,7 @@ UserRoutes.post("/login", loginUser);
 UserRoutes.post("/register/sendEmail/:id", sendEmail);
 UserRoutes.patch("/sendPassword/:id", sendPassword);
 UserRoutes.patch("/forgotPassword", forgotPasswordUser);
-UserRoutes.patch("/changePassword", changePasswordUser);
+UserRoutes.patch("/changePassword", [isAuth], changePasswordUser);
 UserRoutes.patch("/updateUser", [isAuth], updateUser);
 UserRoutes.delete("/deleteUser", [isAuth], deleteUser);
 UserRoutes.get("/", getAllUser);
