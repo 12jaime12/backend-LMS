@@ -15,6 +15,7 @@ const {
   registerUser,
   sendEmail,
   sendPassword,
+  getByRolUser,
 } = require("../controllers/User.controller");
 
 //Nos traemos todos los controladores de User para enrutar cada uno de los diferentes servicios que tendrá
@@ -37,5 +38,6 @@ UserRoutes.patch("/updateUser", [isAuth], updateUser);
 UserRoutes.delete("/deleteUser", [isAuth], deleteUser);
 UserRoutes.get("/", getAllUser);
 UserRoutes.get("/id/:id", getIdUser);
+UserRoutes.get("/rol/taller", getByRolUser);
 
 module.exports = UserRoutes;

@@ -22,6 +22,7 @@ const CocheSchema = new mongoose.Schema(
     comentario: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentario" }],
     like: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     image: { type: Array },
+    image0: { type: String },
   },
   {
     timestamps: true,

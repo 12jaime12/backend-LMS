@@ -457,11 +457,23 @@ const getAllUser = async (req, res, next) => {
 const getIdUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const userById = await User.findById(id);
+    const userById = await User.findById(id).populate("coche_cliente");
     if (userById) {
       return res.status(200).json(userById);
     } else {
       return res.status(404).json("No se ha encontrado el usuario");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+const getByRolUser = async (req, res, next) => {
+  try {
+    const allUserTaller = await User.find({ rol: "taller" });
+    if (allUserTaller) {
+      return res.status(200).json(allUserTaller);
+    } else {
+      return res.status(404).json("No se ha encontrado ningun taller");
     }
   } catch (error) {
     return next(error);
@@ -482,4 +494,5 @@ module.exports = {
   getIdUser,
   sendEmail,
   sendPassword,
+  getByRolUser,
 };

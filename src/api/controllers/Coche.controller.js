@@ -9,23 +9,25 @@ const createCoche = async (req, res, next) => {
   try {
     await Coche.syncIndexes();
     const { _id } = req.user;
-
+    const { marca, modelo, year, combustible, precio } = req.body;
+    const imgCustom = [];
+    const files = req.files;
+    for (options in files) {
+      imgCustom.push(files[options][0].path);
+    }
     const user = await User.findById(_id);
 
-    const arrayAux = [];
-    if (req?.files) {
-      req.files.forEach((element) => {
-        console.log("path", element.path);
-        arrayAux.push(element.path);
-      });
-    }
-    console.log("array", arrayAux);
+    const customNewModelCoche = {
+      image: imgCustom,
+      marca,
+      modelo,
+      year,
+      combustible,
+      precio,
+    };
+
     //CREAMOS EL COCHE CON LOS DATOS INTRODUCIDOS POR req.body Y LE AÑADIMOS EL CLIENTE QUE HA CREADO ESE COCHE
-    const newCoche = new Coche({
-      ...req.body,
-      cliente: user._id,
-      image: arrayAux,
-    });
+    const newCoche = new Coche(customNewModelCoche);
 
     try {
       const coche = await newCoche.save();
