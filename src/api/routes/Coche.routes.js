@@ -21,7 +21,12 @@ const CocheRoutes = express;
 CocheRoutes.post(
   "/createCoche",
   [isAuthClient],
-  upload.array("image", 4),
+  upload.fields([
+    { name: "option_1", maxCount: 1 },
+    { name: "option_2", maxCount: 1 },
+    { name: "option_3", maxCount: 1 },
+    { name: "option_4", maxCount: 1 },
+  ]),
   createCoche
 );
 CocheRoutes.post("/addInteresado", [isAuthClient], addInteresado);
