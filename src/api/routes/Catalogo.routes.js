@@ -15,13 +15,14 @@ const {
   addLike,
   getByLike,
   getAllBase,
+  getById,
 } = require("../controllers/Catalogo.controller");
 
 const CatalogoRoutes = express.Router();
 
 CatalogoRoutes.post(
   "/create",
-  [isAuthAdmin],
+  [isAuthClient],
   upload.array("image", 4),
   createCatalogo
 );
@@ -31,4 +32,5 @@ CatalogoRoutes.get("/getMarca/:marca", [isAuthClient], getByMarca);
 CatalogoRoutes.get("/getModelo/:modelo", [isAuthClient], getByModelo);
 CatalogoRoutes.post("/like/:id", [isAuthClient], addLike);
 CatalogoRoutes.get("/getAllBase", getAllBase);
+CatalogoRoutes.get("/getById/:id", [isAuthClient], getById);
 module.exports = CatalogoRoutes;

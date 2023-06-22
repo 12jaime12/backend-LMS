@@ -85,7 +85,7 @@ const getAll = async (req, res, next) => {
 const getByMarca = async (req, res, next) => {
   try {
     const { marca } = req.params;
-    const catalogoMarca = await Catalogo.find({ marca: marca });
+    const catalogoMarca = await Catalogo.find({ marca: marca, rol: "base" });
     if (catalogoMarca) {
       return res.status(200).json(catalogoMarca);
     } else {
@@ -206,7 +206,19 @@ const getByLike = async (req, res, next) => {
     return next(error);
   }
 };
-
+const getById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const catalogoById = await Catalogo.findById(id);
+    if (catalogoById) {
+      return res.status(200).json(catalogoById);
+    } else {
+      return res.status(404).json("error al encontrar el coche buscado");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 module.exports = {
   createCatalogo,
   deleteCar,
@@ -218,4 +230,5 @@ module.exports = {
   addLike,
   getByLike,
   getAllBase,
+  getById,
 };
