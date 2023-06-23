@@ -6,7 +6,8 @@ const User = require("../models/User.model");
 //----------------create-------------
 const createComent = async (req, res, next) => {
   try {
-    const { id } = req.params; //idcoche
+    console.log("reqUSER", req.user);
+    const { id } = req.body; //idcoche
     const { content, variable } = req.body;
     if (variable === "coche") {
       const newComentario = new Comentario({

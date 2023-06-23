@@ -438,6 +438,31 @@ const deleteUser = async (req, res, next) => {
     return next(error);
   }
 };
+//--------10-----------ADD LIKE------------------------------
+//-----------------------------------------------------------
+const addLike = async (req, res, next) => {
+  try {
+    const { idCoche, idUser } = req.body;
+    console.log(req.body);
+    console.log(idCoche);
+    const user = await User.findById(idUser);
+    const coche = await Coche.findById(idCoche);
+    console.log("coche", coche);
+    //SI EL USUARIO LE DA LIKE Y TODAVIA NO LO TIENE GUARDADO, SE GUARDA EN AMBOS CAMPOS TANTO EN USER COMO EN COCHE Y EN CASO CONTRARIO,
+    //DE QUE YA TENGA EL LIKE DEL COCHE SE LE QUITA A AMBOS CAMPOS TAMBIEN
+    if (!coche.like.includes(idUser)) {
+      await coche.updateOne({ $push: { like: idUser } });
+      await user.updateOne({ $push: { like_coche: idCoche } });
+      return res.status(200).json("Like añadido al user");
+    } else {
+      await coche.updateOne({ $pull: { like: idUser } });
+      await user.updateOne({ $pull: { like_coche: idCoche } });
+      return res.status(200).json("Like quitado del user");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------10-----------GET ALL-------------------------------
 //-----------------------------------------------------------
 const getAllUser = async (req, res, next) => {
@@ -495,4 +520,5 @@ module.exports = {
   sendEmail,
   sendPassword,
   getByRolUser,
+  addLike,
 };

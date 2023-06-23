@@ -1,4 +1,4 @@
-const { isAuth } = require("../../middleware/auth.middleware");
+const { isAuth, isAuthClient } = require("../../middleware/auth.middleware");
 const { upload } = require("../../middleware/files.middleware");
 
 const {
@@ -16,6 +16,7 @@ const {
   sendEmail,
   sendPassword,
   getByRolUser,
+  addLike,
 } = require("../controllers/User.controller");
 
 //Nos traemos todos los controladores de User para enrutar cada uno de los diferentes servicios que tendrá
@@ -35,6 +36,7 @@ UserRoutes.patch("/sendPassword/:id", sendPassword);
 UserRoutes.patch("/forgotPassword", forgotPasswordUser);
 UserRoutes.patch("/changePassword", [isAuth], changePasswordUser);
 UserRoutes.patch("/updateUser", [isAuth], updateUser);
+UserRoutes.patch("/addLike", [isAuthClient], addLike);
 UserRoutes.delete("/deleteUser", [isAuth], deleteUser);
 UserRoutes.get("/", getAllUser);
 UserRoutes.get("/id/:id", getIdUser);
