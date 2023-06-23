@@ -5,18 +5,14 @@ const User = require("../models/User.model");
 //--------------create-car-----------------
 const createCatalogo = async (req, res, next) => {
   try {
-    const arrayAux = [];
-    if (req?.files) {
-      req.files.forEach((element) => {
-        console.log("path", element.path);
-        arrayAux.push(element.path);
-      });
-    }
-    const newCatalogo = new Catalogo({ ...req.body, image: arrayAux });
+    const { _id } = req.user;
+    const newCatalogo = new Catalogo({ ...req.body });
 
     try {
       const catalogo = await newCatalogo.save();
 
+      const user = await User.findById(_id);
+      await user.updateOne({ $push: { coche_tienda: catalogo._id } });
       return res.status(200).json(catalogo);
     } catch (error) {
       return next(error);

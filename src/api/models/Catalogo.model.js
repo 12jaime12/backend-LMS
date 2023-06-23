@@ -7,6 +7,7 @@ const CatalogoSchema = new mongoose.Schema(
     llantas: { type: mongoose.Schema.Types.ObjectId, ref: "Llantas" },
     motor: { type: mongoose.Schema.Types.ObjectId, ref: "Motor" },
     cliente: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    precio: { type: Number },
     image: { type: Array },
   },
   {
