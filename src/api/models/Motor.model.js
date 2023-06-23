@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const MotorSchema = new Schema(
   {
-    cars: { type: mongoose.Schema.Types.ObjectId, ref: "CocheBase" },
+    cars: [{ type: mongoose.Schema.Types.ObjectId, ref: "CocheBase" }],
     name: { type: String },
     precio: { type: Number },
   },
