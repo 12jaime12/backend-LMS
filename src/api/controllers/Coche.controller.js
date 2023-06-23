@@ -233,20 +233,28 @@ const addLike = async (req, res, next) => {
 //--------------add-taller------------
 const addTaller = async (req, res, next) => {
   try {
-    const { idCoche } = req.body;
-    const { idTaller } = req.body;
+    console.log("reqqqqqq", req.body);
+    const { idCoche, idTaller } = req.body;
     const taller = await User.findById(idTaller);
     const coche = await Coche.findById(idCoche);
 
+    console.log("taller", idTaller);
+    console.log("coche", idCoche);
     //AÑADIMOS EL COCHE AL TALLER Y AL USUARIO-TALLER LE AÑADIMOS EL COCHE
     if (coche) {
-      await coche.updateOne({ $push: { taller: idTaller } });
-      await taller.updateOne({ $push: { coche_reparacion: idCoche } });
-      return res
-        .status(200)
-        .json(
-          `El coche${coche.marca} ha sido añadido al taller ${taller.name}`
-        );
+      console.log("taller punto taller", taller.taller);
+      console.log(coche._id);
+      if (taller.taller.includes(coche._id)) {
+        return res.status(404).json("El taller ya incluye ese coche");
+      } else {
+        await coche.updateOne({ $push: { taller: idTaller } });
+        await taller.updateOne({ $push: { taller: idCoche } });
+        return res
+          .status(200)
+          .json(
+            `El coche -> ${coche.marca} ${coche.modelo} ha sido añadido al taller -> ${taller.name} ${taller.apellido}`
+          );
+      }
     } else {
       return res
         .status(404)
