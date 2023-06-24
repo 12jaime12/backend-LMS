@@ -347,17 +347,10 @@ const changePasswordUser = async (req, res, next) => {
 //-----------------------------------------------------------
 const updateUser = async (req, res, next) => {
   try {
+    console.log("update entro");
     const { _id } = req.user;
-    const {
-      name,
-      apellido,
-      movil,
-      direccion,
-      ciudad,
-      provincia,
-      pais,
-      genero,
-    } = req.body;
+    const { name, apellido, movil, direccion, ciudad, provincia, pais } =
+      req.body;
     const newImagen = req?.file?.path;
     const userUpdate = await User.findById(_id);
 
