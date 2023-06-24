@@ -482,7 +482,9 @@ const getAllUser = async (req, res, next) => {
 const getIdUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const userById = await User.findById(id).populate("coche_cliente");
+    const userById = await User.findById(id).populate(
+      "coche_cliente like_coche"
+    );
     if (userById) {
       return res.status(200).json(userById);
     } else {
