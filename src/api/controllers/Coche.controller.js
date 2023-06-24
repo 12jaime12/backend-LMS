@@ -220,11 +220,17 @@ const addLike = async (req, res, next) => {
     if (!coche.like.includes(_id)) {
       await coche.updateOne({ $push: { like: _id } });
       await user.updateOne({ $push: { like_coche: id } });
-      return res.status(200).json("Like añadido al user");
+      return res.status(200).json({
+        results: "Like añadido al user",
+        update: await Coche.find(),
+      });
     } else {
       await coche.updateOne({ $pull: { like: _id } });
       await user.updateOne({ $pull: { like_coche: id } });
-      return res.status(200).json("Like quitado del user");
+      return res.status(200).json({
+        results: "Like quitado del user",
+        update: await Coche.find(),
+      });
     }
   } catch (error) {
     return next(error);
