@@ -9,7 +9,7 @@ const {
 const { isAuthClient } = require("../../middleware/auth.middleware");
 const ComentariosRoutes = express.Router();
 
-ComentariosRoutes.post("/create/:id", [isAuthClient], createComent);
+ComentariosRoutes.post("/create", [isAuthClient], createComent);
 ComentariosRoutes.delete("/delete/:id", [isAuthClient], deleteComent);
 ComentariosRoutes.get("/getAll", [isAuthClient], getAll);
 ComentariosRoutes.get("/getByCoche/:id", [isAuthClient], getByCoche);
