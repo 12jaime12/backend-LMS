@@ -30,7 +30,7 @@ CocheRoutes.post(
   createCoche
 );
 CocheRoutes.post("/addInteresado", [isAuthClient], addInteresado);
-CocheRoutes.post("/addLike", [isAuthClient], addLike);
+CocheRoutes.patch("/addLike", [isAuthClient], addLike);
 CocheRoutes.post("/addTaller", [isAuthClient], addTaller);
 CocheRoutes.delete("/deleteCoche/:id", [isAuthClient], deleteCoche);
 CocheRoutes.patch("/updateCoche/:id", [isAuthClient], updateCoche);
