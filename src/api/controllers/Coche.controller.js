@@ -121,6 +121,9 @@ const updateCoche = async (req, res, next) => {
 const getAllCoche = async (req, res, next) => {
   try {
     const allCoches = await Coche.find();
+    const a = allCoches.sort((a, b) => b.like.length - a.like.length);
+
+    console.log(a);
     if (allCoches) {
       return res.status(200).json(allCoches);
     } else {
@@ -138,7 +141,7 @@ const getByMarca = async (req, res, next) => {
     if (allCoches) {
       const marcas = [];
       allCoches.forEach((coche) => {
-        if (marca == coche.marca) {
+        if (marca.toLowerCase() == coche.marca.toLowerCase()) {
           marcas.push(coche);
         }
       });

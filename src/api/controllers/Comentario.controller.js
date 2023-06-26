@@ -117,7 +117,9 @@ const deleteComent = async (req, res, next) => {
 //----------------get-all------------
 const getAll = async (req, res, next) => {
   try {
-    const comentarios = await Comentario.find().populate("Creador");
+    const comentarios = await Comentario.find()
+      .populate("Creador")
+      .sort({ createdAt: -1 });
     if (comentarios) {
       return res.status(200).json(comentarios);
     } else {
