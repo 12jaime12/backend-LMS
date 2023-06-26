@@ -275,6 +275,9 @@ const addTaller = async (req, res, next) => {
       } else {
         await coche.updateOne({ $push: { taller: idTaller } });
         await taller.updateOne({ $push: { taller: idCoche } });
+        await coche.updateOne({ estado: "taller" });
+        const updatedCoche = await User.findById(idCoche);
+        console.log(updatedCoche);
         return res
           .status(200)
           .json(
