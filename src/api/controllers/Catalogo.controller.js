@@ -202,10 +202,13 @@ const getByLike = async (req, res, next) => {
     return next(error);
   }
 };
+//------------------get-by-id------------------------
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const catalogoById = await Catalogo.findById(id);
+    const catalogoById = await Catalogo.findById(id).populate(
+      "cocheBase color motor"
+    );
     if (catalogoById) {
       return res.status(200).json(catalogoById);
     } else {

@@ -141,8 +141,9 @@ const getAllCoche = async (req, res, next) => {
 const getCochesVenta = async (req, res, next) => {
   try {
     const allCoches = await Coche.find({ estado: "venta" });
-    if (allCoches) {
-      return res.status(200).json(allCoches);
+    const ordenados = allCoches.sort((a, b) => b.like.length - a.like.length);
+    if (ordenados) {
+      return res.status(200).json(ordenados);
     } else {
       return res.status(404).json("No hay ningun coche en la base de datos");
     }
@@ -242,14 +243,14 @@ const addLike = async (req, res, next) => {
       await user.updateOne({ $push: { like_coche: id } });
       return res.status(200).json({
         results: "Like añadido al user",
-        update: await Coche.find(),
+        update: await Coche.find({ estado: "venta" }),
       });
     } else {
       await coche.updateOne({ $pull: { like: _id } });
       await user.updateOne({ $pull: { like_coche: id } });
       return res.status(200).json({
         results: "Like quitado del user",
-        update: await Coche.find(),
+        update: await Coche.find({ estado: "venta" }),
       });
     }
   } catch (error) {
