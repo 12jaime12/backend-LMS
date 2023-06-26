@@ -11,8 +11,8 @@ const ComentariosRoutes = express.Router();
 
 ComentariosRoutes.post("/create", [isAuthClient], createComent);
 ComentariosRoutes.delete("/delete/:id", [isAuthClient], deleteComent);
-ComentariosRoutes.get("/getAll", [isAuthClient], getAll);
-ComentariosRoutes.get("/getByCoche/:id", [isAuthClient], getByCoche);
-ComentariosRoutes.get("/getByCatalogo/:id", [isAuthClient], getByCatalogo);
+ComentariosRoutes.get("/getAll", getAll);
+ComentariosRoutes.get("/getByCoche/:id", getByCoche);
+ComentariosRoutes.get("/getByCatalogo/:id", getByCatalogo);
 
 module.exports = ComentariosRoutes;
