@@ -137,6 +137,19 @@ const getAllCoche = async (req, res, next) => {
     return next(error);
   }
 };
+//--------------get-coches-venta-----------
+const getCochesVenta = async (req, res, next) => {
+  try {
+    const allCoches = await Coche.find({ estado: "venta" });
+    if (allCoches) {
+      return res.status(200).json(allCoches);
+    } else {
+      return res.status(404).json("No hay ningun coche en la base de datos");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 //--------------get-by-marca---------------
 const getByMarca = async (req, res, next) => {
   try {
@@ -321,4 +334,5 @@ module.exports = {
   addLike,
   addTaller,
   getCocheById,
+  getCochesVenta,
 };

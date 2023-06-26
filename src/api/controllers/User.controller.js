@@ -476,7 +476,7 @@ const getIdUser = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userById = await User.findById(id).populate(
-      "coche_cliente like_coche"
+      "coche_cliente like_coche coche_tienda"
     );
     if (userById) {
       return res.status(200).json(userById);
