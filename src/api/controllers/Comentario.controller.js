@@ -1,5 +1,6 @@
 const Catalogo = require("../models/Catalogo.model");
 const Coche = require("../models/Coche.model");
+const CocheBase = require("../models/CocheBase.model");
 const Comentario = require("../models/Comentario.model");
 const User = require("../models/User.model");
 
@@ -44,7 +45,8 @@ const createComent = async (req, res, next) => {
       try {
         const comentarioSave = await newComentario.save();
 
-        const catologo = await Catalogo.findById(id);
+        const catologo = await CocheBase.findById(id);
+        console.log(catologo);
 
         await catologo.updateOne({
           $push: { comentario: comentarioSave._id },
@@ -129,7 +131,7 @@ const getAll = async (req, res, next) => {
 const getByCoche = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const coments = await Comentario.find({ Coche: id });
+    const coments = await Comentario.find({ Coche: id }).populate("Creador");
     if (coments) {
       return res.status(200).json(coments);
     } else {
@@ -143,7 +145,7 @@ const getByCoche = async (req, res, next) => {
 const getByCatalogo = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const coments = await Comentario.find({ Catalogo: id });
+    const coments = await Comentario.find({ Catalogo: id }).populate("Creador");
     if (coments) {
       return res.status(200).json(coments);
     } else {
