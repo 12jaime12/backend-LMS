@@ -97,11 +97,15 @@ const deleteCoche = async (req, res, next) => {
 const updateCoche = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { precio } = req.body;
-
-    const cocheUpdate = await Coche.findByIdAndUpdate(id, { precio: precio });
+    const { precio, estado } = req.body;
+    console.log(precio);
+    const cocheUpdate = await Coche.findByIdAndUpdate(id, {
+      precio: precio,
+      estado: estado,
+    });
+    console.log("id", id);
     const cocheYaUpdate = await Coche.findById(id);
-
+    console.log("ya update", cocheYaUpdate);
     //ACTUALIZAMOS EL COCHE Y COMPROBAMOS MEDIANTE EL PRECIO (ya que es el unico campo que se puede actualizr) SI SE HA ACTUALIZADO BIEN.
     if (cocheYaUpdate.precio == precio) {
       return res.status(200).json({
