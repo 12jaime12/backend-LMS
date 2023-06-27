@@ -11,6 +11,7 @@ const CocheSchema = new mongoose.Schema(
       required: true,
     },
     precio: { type: Number },
+    content: { type: String },
     taller: { type: mongoose.Schema.Types.ObjectId, ref: "Taller" },
     cliente: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     estado: {

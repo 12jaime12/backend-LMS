@@ -71,6 +71,7 @@ const deleteComent = async (req, res, next) => {
   try {
     const { id } = req.params;
     const comentarioToDelete = await Comentario.findById(id);
+    console.log(comentarioToDelete);
     if (comentarioToDelete.rol === "coche") {
       await Comentario.findByIdAndDelete(id);
       const comentarioDelete = await Comentario.findById(id);
@@ -102,7 +103,8 @@ const deleteComent = async (req, res, next) => {
           $pull: { comentario: id },
         });
 
-        const coche = await Coche.findById(comentarioToDelete.Coche);
+        const coche = await CocheBase.findById(comentarioToDelete.Catalogo);
+        console.log(coche);
         console.log(comentarioToDelete.Creador.toString());
         await coche.updateOne({
           $pull: { comentario: id },
@@ -117,9 +119,7 @@ const deleteComent = async (req, res, next) => {
 //----------------get-all------------
 const getAll = async (req, res, next) => {
   try {
-    const comentarios = await Comentario.find()
-      .populate("Creador")
-      .sort({ createdAt: -1 });
+    const comentarios = await Comentario.find().populate("Creador");
     if (comentarios) {
       return res.status(200).json(comentarios);
     } else {

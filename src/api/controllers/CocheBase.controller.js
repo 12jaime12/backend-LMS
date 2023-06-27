@@ -21,8 +21,10 @@ const getByMarca = async (req, res, next) => {
     const { marca } = req.params;
     console.log(marca);
     const coches = await CocheBase.find({ marca: marca });
-    if (coches) {
-      return res.status(200).json(coches);
+
+    const ordenados = coches.sort((a, b) => b.like.length - a.like.length);
+    if (ordenados) {
+      return res.status(200).json(ordenados);
     } else {
       return res.status(404).json("error al encontrar los coches");
     }
