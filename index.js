@@ -43,17 +43,17 @@ app.use('/api/v1/llanta/', LlantaRoute);
 app.use('/api/v1/cochebase', CocheBaseRoutes);
 app.use('/api/v1/motor/', MotorRoutes);
 
-// app.use('*', (req, res, next) => {
-//   const error = new Error('Route not found');
-//   error.status = 404;
-//   return next(error);
-// });
+app.use('*', (req, res, next) => {
+  const error = new Error('Route not found');
+  error.status = 404;
+  return next(error);
+});
 
-// app.use((error, req, res) => {
-//   return res
-//     .status(error.status || 500)
-//     .json(error.message || 'Unexpected error');
-// });
+app.use((error, req, res) => {
+  return res
+    .status(error.status || 500)
+    .json(error.message || 'Unexpected error');
+});
 
 app.disable('x-powered-by');
 app.listen(PORT, () => {
