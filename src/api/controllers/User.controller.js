@@ -346,7 +346,7 @@ const changePasswordUser = async (req, res, next) => {
 //-----------------------------------------------------------
 const updateUser = async (req, res, next) => {
   try {
-    console.log('update entro');
+    console.log('update entro', req.body);
     const { _id } = req.user;
     const { name, apellido, movil, direccion, ciudad, provincia, pais } =
       req.body;
