@@ -56,6 +56,6 @@ app.use('/api/v1/motor/', MotorRoutes);
 // });
 
 app.disable('x-powered-by');
-app.listen(() => {
+app.listen(PORT, () => {
   console.log(`Listening on PORT https://backend-lms-nine.vercel.app/`);
 });
