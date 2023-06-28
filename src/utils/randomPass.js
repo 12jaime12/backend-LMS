@@ -1,7 +1,7 @@
 //creamos una funcion que genera una contraseña de 6 digitos de una forma random
 
 const randomPassword = () => {
-  const randomString = "*@!=&$";
+  const randomString = '*@!=&$';
   const passwordSecure = `${Math.random().toString(36).slice(-4)}${
     randomString[Math.floor(Math.random() * 5)]
   }${randomString[Math.floor(Math.random() * 5)]}${Math.random()

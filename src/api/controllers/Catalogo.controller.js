@@ -1,6 +1,6 @@
-const dotenv = require("dotenv");
-const Catalogo = require("../models/Catalogo.model");
-const User = require("../models/User.model");
+const Catalogo = require('../models/Catalogo.model');
+const Comentario = require('../models/Comentario.model');
+const User = require('../models/User.model');
 
 //--------------create-car-----------------
 const createCatalogo = async (req, res, next) => {
@@ -32,9 +32,9 @@ const deleteCar = async (req, res, next) => {
         await Comentario.findByIdAndDelete(element);
       });
 
-      return res.status(200).json("ok borrado");
+      return res.status(200).json('ok borrado');
     } else {
-      return res.status(404).json("error al borrar");
+      return res.status(404).json('error al borrar');
     }
   } catch (error) {
     return next(error);
@@ -45,7 +45,7 @@ const updateCar = async (req, res, next) => {
   try {
     const newCatalogo = new Catalogo(req.body);
 
-    newCatalogo.rol = "personalizado";
+    newCatalogo.rol = 'personalizado';
     newCatalogo.cliente = req.user._id;
 
     try {
@@ -71,7 +71,7 @@ const getAll = async (req, res, next) => {
     if (allCatalogo) {
       return res.status(200).json(allCatalogo);
     } else {
-      return res.status(404).json("error al encontrar el catalogo");
+      return res.status(404).json('error al encontrar el catalogo');
     }
   } catch (error) {
     return next(error);
@@ -81,11 +81,11 @@ const getAll = async (req, res, next) => {
 const getByMarca = async (req, res, next) => {
   try {
     const { marca } = req.params;
-    const catalogoMarca = await Catalogo.find({ marca: marca, rol: "base" });
+    const catalogoMarca = await Catalogo.find({ marca: marca, rol: 'base' });
     if (catalogoMarca) {
       return res.status(200).json(catalogoMarca);
     } else {
-      return res.status(404).json("error al cargar los coches de esa marca");
+      return res.status(404).json('error al cargar los coches de esa marca');
     }
   } catch (error) {
     return next(error);
@@ -99,7 +99,7 @@ const getByModelo = async (req, res, next) => {
     if (catalogoModelo) {
       return res.status(200).json(catalogoModelo);
     } else {
-      return res.status(404).json("error al cargar los coches de esa marca");
+      return res.status(404).json('error al cargar los coches de esa marca');
     }
   } catch (error) {
     return next(error);
@@ -108,11 +108,11 @@ const getByModelo = async (req, res, next) => {
 //-------------get-all-base----------------
 const getAllBase = async (req, res, next) => {
   try {
-    const allBase = await Catalogo.find({ rol: "base" });
+    const allBase = await Catalogo.find({ rol: 'base' });
     if (allBase) {
       return res.status(200).json(allBase);
     } else {
-      return res.status(404).json("error al conseguir todos los coches base");
+      return res.status(404).json('error al conseguir todos los coches base');
     }
   } catch (error) {
     return next(error);
@@ -131,7 +131,7 @@ const addInteresado = async (req, res, next) => {
       await user.updateOne({
         $push: { intereses: id },
       });
-      return res.status(200).json("Añadido a interesados");
+      return res.status(200).json('Añadido a interesados');
     } else {
       await catalogo.updateOne({
         $pull: { interesados: req.user._id },
@@ -139,7 +139,7 @@ const addInteresado = async (req, res, next) => {
       await user.updateOne({
         $pull: { intereses: id },
       });
-      return res.status(200).json("Eliminado de interesados");
+      return res.status(200).json('Eliminado de interesados');
     }
   } catch (error) {
     return next(error);
@@ -158,7 +158,7 @@ const addLike = async (req, res, next) => {
       await user.updateOne({
         $push: { like_coche: id },
       });
-      return res.status(200).json("like añadido");
+      return res.status(200).json('like añadido');
     } else {
       await catalogo.updateOne({
         $pull: { like: req.user._id },
@@ -166,7 +166,7 @@ const addLike = async (req, res, next) => {
       await user.updateOne({
         $pull: { like_coche: id },
       });
-      return res.status(200).json("like eliminado");
+      return res.status(200).json('like eliminado');
     }
   } catch (error) {
     return next(error);
@@ -175,10 +175,10 @@ const addLike = async (req, res, next) => {
 //--------------ranking-de-like------------
 const getByLike = async (req, res, next) => {
   try {
-    const allCatalogo = await Catalogo.find({ rol: "base" });
+    const allCatalogo = await Catalogo.find({ rol: 'base' });
     const arrayLikesOrdenado = [];
     let aux = 0;
-    if (allCoches) {
+    if (allCatalogo) {
       //CREAMOS UN BUCLE QUE LO PRIMERO QUE HACE ES PUSHEARNOS CADA UNO DE LOS COCHES A UN ARRAY VACIO, Y DESPUES MEDIANTE UNA CONDICION
       //EVALUAMOS CUAL DE LOS COCHES TIENE MAYOR NUMERO DE LIKES PARA POSICIONARLO EN UN SITIO U OTRO DEL ARRAY, ASI NOS LO ORDENARÁ DE
       //MAYOR A MENOR NUMERO DE LIKES
@@ -196,7 +196,7 @@ const getByLike = async (req, res, next) => {
 
       return res.status(200).json(arrayLikesOrdenado);
     } else {
-      return res.status(404).json("No hay coches con likes para ordenar");
+      return res.status(404).json('No hay coches con likes para ordenar');
     }
   } catch (error) {
     return next(error);
@@ -207,12 +207,12 @@ const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const catalogoById = await Catalogo.findById(id).populate(
-      "cocheBase color motor"
+      'cocheBase color motor'
     );
     if (catalogoById) {
       return res.status(200).json(catalogoById);
     } else {
-      return res.status(404).json("error al encontrar el coche buscado");
+      return res.status(404).json('error al encontrar el coche buscado');
     }
   } catch (error) {
     return next(error);

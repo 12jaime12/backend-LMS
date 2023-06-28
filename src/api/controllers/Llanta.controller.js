@@ -1,4 +1,4 @@
-const Llanta = require("../models/Llanta.model");
+const Llanta = require('../models/Llanta.model');
 
 //----------------create----------------
 const createLlanta = async (req, res, next) => {

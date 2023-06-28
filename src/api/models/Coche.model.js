@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const CocheSchema = new mongoose.Schema(
   {
@@ -7,21 +7,21 @@ const CocheSchema = new mongoose.Schema(
     year: { type: Number, required: true, trim: true },
     combustible: {
       type: String,
-      enum: ["diesel", "gasolina", "hibrido", "electrico"],
+      enum: ['diesel', 'gasolina', 'hibrido', 'electrico'],
       required: true,
     },
     precio: { type: Number },
     content: { type: String },
-    taller: { type: mongoose.Schema.Types.ObjectId, ref: "Taller" },
-    cliente: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    taller: { type: mongoose.Schema.Types.ObjectId, ref: 'Taller' },
+    cliente: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     estado: {
       type: String,
-      enum: ["venta", "none", "taller"],
-      default: "none",
+      enum: ['venta', 'none', 'taller'],
+      default: 'none',
     },
-    interesados: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    comentario: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentario" }],
-    like: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    interesados: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    comentario: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comentario' }],
+    like: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     image: { type: Array },
     image0: { type: String },
   },
@@ -30,5 +30,5 @@ const CocheSchema = new mongoose.Schema(
   }
 );
 
-const Coche = mongoose.model("Coche", CocheSchema);
+const Coche = mongoose.model('Coche', CocheSchema);
 module.exports = Coche;

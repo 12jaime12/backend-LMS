@@ -1,12 +1,12 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const CatalogoSchema = new mongoose.Schema(
   {
-    cocheBase: { type: mongoose.Schema.Types.ObjectId, ref: "CocheBase" },
-    color: { type: mongoose.Schema.Types.ObjectId, ref: "Color" },
-    llantas: { type: mongoose.Schema.Types.ObjectId, ref: "Llantas" },
-    motor: { type: mongoose.Schema.Types.ObjectId, ref: "Motor" },
-    cliente: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    cocheBase: { type: mongoose.Schema.Types.ObjectId, ref: 'CocheBase' },
+    color: { type: mongoose.Schema.Types.ObjectId, ref: 'Color' },
+    llantas: { type: mongoose.Schema.Types.ObjectId, ref: 'Llantas' },
+    motor: { type: mongoose.Schema.Types.ObjectId, ref: 'Motor' },
+    cliente: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     precio: { type: Number },
     image: { type: Array },
   },
@@ -15,5 +15,5 @@ const CatalogoSchema = new mongoose.Schema(
   }
 );
 
-const Catalogo = mongoose.model("Catalogo", CatalogoSchema);
+const Catalogo = mongoose.model('Catalogo', CatalogoSchema);
 module.exports = Catalogo;

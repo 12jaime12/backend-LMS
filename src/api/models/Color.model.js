@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const ColorSchema = new mongoose.Schema(
   {
     // cars es el id del coche al que pertenece, del coche base
     codeColor: { type: String },
-    cars: { type: mongoose.Schema.Types.ObjectId, ref: "CocheBase" },
+    cars: { type: mongoose.Schema.Types.ObjectId, ref: 'CocheBase' },
     name: { type: String },
     precio: { type: Number },
   },
@@ -13,5 +13,5 @@ const ColorSchema = new mongoose.Schema(
   }
 );
 
-const Color = mongoose.model("Color", ColorSchema);
+const Color = mongoose.model('Color', ColorSchema);
 module.exports = Color;

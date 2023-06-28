@@ -1,21 +1,20 @@
-const Catalogo = require("../models/Catalogo.model");
-const Coche = require("../models/Coche.model");
-const CocheBase = require("../models/CocheBase.model");
-const Comentario = require("../models/Comentario.model");
-const User = require("../models/User.model");
+const Coche = require('../models/Coche.model');
+const CocheBase = require('../models/CocheBase.model');
+const Comentario = require('../models/Comentario.model');
+const User = require('../models/User.model');
 
 //----------------create-------------
 const createComent = async (req, res, next) => {
   try {
-    console.log("reqUSER", req.user);
+    console.log('reqUSER', req.user);
     const { id } = req.body; //idcoche
     const { content, variable } = req.body;
-    if (variable === "coche") {
+    if (variable === 'coche') {
       const newComentario = new Comentario({
         content: content,
         Coche: id,
         Creador: req.user._id,
-        rol: "coche",
+        rol: 'coche',
       });
       try {
         const comentarioSave = await newComentario.save();
@@ -35,12 +34,12 @@ const createComent = async (req, res, next) => {
       } catch (error) {
         return next(error);
       }
-    } else if (variable === "catalogo") {
+    } else if (variable === 'catalogo') {
       const newComentario = new Comentario({
         content: content,
         Catalogo: id,
         Creador: req.user._id,
-        rol: "catalogo",
+        rol: 'catalogo',
       });
       try {
         const comentarioSave = await newComentario.save();
@@ -72,11 +71,11 @@ const deleteComent = async (req, res, next) => {
     const { id } = req.params;
     const comentarioToDelete = await Comentario.findById(id);
     console.log(comentarioToDelete);
-    if (comentarioToDelete.rol === "coche") {
+    if (comentarioToDelete.rol === 'coche') {
       await Comentario.findByIdAndDelete(id);
       const comentarioDelete = await Comentario.findById(id);
       if (comentarioDelete) {
-        return res.status(404).json("error al borrar");
+        return res.status(404).json('error al borrar');
       } else {
         const creador = await User.findById(comentarioToDelete.Creador);
         console.log(comentarioToDelete.Creador.toString());
@@ -89,13 +88,13 @@ const deleteComent = async (req, res, next) => {
         await coche.updateOne({
           $pull: { comentario: id },
         });
-        return res.status(200).json("ok delete");
+        return res.status(200).json('ok delete');
       }
-    } else if (comentarioToDelete.rol === "catalogo") {
+    } else if (comentarioToDelete.rol === 'catalogo') {
       await Comentario.findByIdAndDelete(id);
       const comentarioDelete = await Comentario.findById(id);
       if (comentarioDelete) {
-        return res.status(404).json("error al borrar");
+        return res.status(404).json('error al borrar');
       } else {
         const creador = await User.findById(comentarioToDelete.Creador);
         console.log(comentarioToDelete.Creador.toString());
@@ -109,7 +108,7 @@ const deleteComent = async (req, res, next) => {
         await coche.updateOne({
           $pull: { comentario: id },
         });
-        return res.status(200).json("ok delete");
+        return res.status(200).json('ok delete');
       }
     }
   } catch (error) {
@@ -119,11 +118,11 @@ const deleteComent = async (req, res, next) => {
 //----------------get-all------------
 const getAll = async (req, res, next) => {
   try {
-    const comentarios = await Comentario.find().populate("Creador");
+    const comentarios = await Comentario.find().populate('Creador');
     if (comentarios) {
       return res.status(200).json(comentarios);
     } else {
-      return res.starus(404).json("error al traer todos los comentarios");
+      return res.starus(404).json('error al traer todos los comentarios');
     }
   } catch (error) {
     return next(error);
@@ -133,11 +132,11 @@ const getAll = async (req, res, next) => {
 const getByCoche = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const coments = await Comentario.find({ Coche: id }).populate("Creador");
+    const coments = await Comentario.find({ Coche: id }).populate('Creador');
     if (coments) {
       return res.status(200).json(coments);
     } else {
-      return res.status(404).json("Error al encontrar los comentarios");
+      return res.status(404).json('Error al encontrar los comentarios');
     }
   } catch (error) {
     return next(error);
@@ -147,11 +146,11 @@ const getByCoche = async (req, res, next) => {
 const getByCatalogo = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const coments = await Comentario.find({ Catalogo: id }).populate("Creador");
+    const coments = await Comentario.find({ Catalogo: id }).populate('Creador');
     if (coments) {
       return res.status(200).json(coments);
     } else {
-      return res.status(404).json("Error al encontrar los comentarios");
+      return res.status(404).json('Error al encontrar los comentarios');
     }
   } catch (error) {
     return next(error);

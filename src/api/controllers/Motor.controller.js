@@ -1,4 +1,4 @@
-const Motor = require("../models/Motor.model");
+const Motor = require('../models/Motor.model');
 
 //------------------create-Motor---------------------
 const createMotor = async (req, res, next) => {

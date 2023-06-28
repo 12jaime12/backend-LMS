@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
-const dotenv = require("dotenv");
-const bcrypt = require("bcrypt");
+const mongoose = require('mongoose');
+const validator = require('validator');
+
+const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
 
 //validator: isMobile -> isMobilePhone(str [, locale [, options]])
@@ -21,14 +21,14 @@ const TallerSchema = new Schema(
       required: true,
       trim: true,
       validate: [validator.isStrongPassword],
-      minlength: [8, "min 8 characters"],
+      minlength: [8, 'min 8 characters'],
     },
     email: {
       type: String,
       required: true,
       unique: true,
       trim: true,
-      validate: [validator.isEmail, "email no valido"],
+      validate: [validator.isEmail, 'email no valido'],
     },
     movil: {
       type: Number,
@@ -40,28 +40,28 @@ const TallerSchema = new Schema(
     direccion: { type: String, required: true, trim: true },
     ciudad: { type: String, required: true, trim: true },
     provincia: { type: String, required: true, trim: true },
-    rol: { type: String, default: "taller" },
+    rol: { type: String, default: 'taller' },
 
-    cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    mecanico: [{ type: mongoose.Schema.Types.ObjectId, ref: "" }],
-    coche_reparacion: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coche" }],
-    coche_terminado: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coche" }],
-    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
+    cliente: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    mecanico: [{ type: mongoose.Schema.Types.ObjectId, ref: '' }],
+    coche_reparacion: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Coche' }],
+    coche_terminado: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Coche' }],
+    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
   },
   {
     timestamps: true,
   }
 );
 
-TallerSchema.pre("save", async function (next) {
+TallerSchema.pre('save', async function (next) {
   try {
     this.password = await bcrypt.hash(this.password, 10);
     next();
   } catch (error) {
     console.log(error);
-    next("Error hashing password", error);
+    next('Error hashing password', error);
   }
 });
 
-const Taller = mongoose.model("Taller", TallerSchema);
+const Taller = mongoose.model('Taller', TallerSchema);
 module.exports = Taller;

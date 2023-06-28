@@ -1,8 +1,7 @@
-const Coche = require("../models/Coche.model");
-const Comentario = require("../models/Comentario.model");
-const Review = require("../models/Review.model");
-const Taller = require("../models/Taller.model");
-const User = require("../models/User.model");
+const Coche = require('../models/Coche.model');
+const Comentario = require('../models/Comentario.model');
+
+const User = require('../models/User.model');
 
 //--------------create-coche-----------------
 const createCoche = async (req, res, next) => {
@@ -12,7 +11,7 @@ const createCoche = async (req, res, next) => {
     const { marca, modelo, year, combustible, precio } = req.body;
     const imgCustom = [];
     const files = req.files;
-    for (options in files) {
+    for (let options in files) {
       imgCustom.push(files[options][0].path);
     }
     const user = await User.findById(_id);
@@ -34,7 +33,7 @@ const createCoche = async (req, res, next) => {
       if (!coche) {
         return res
           .status(404)
-          .json("El coche no se ha guardado en la BBDD correctamente");
+          .json('El coche no se ha guardado en la BBDD correctamente');
       } else {
         //AQUI AÑADIMOS AL USUARIO EL COCHE QUE ACABA DE CREAR
         await user.updateOne({ $push: { coche_cliente: coche._id } });
@@ -50,21 +49,21 @@ const createCoche = async (req, res, next) => {
 //--------------delete-car-----------------
 const deleteCoche = async (req, res, next) => {
   try {
-    console.log("entro delete");
+    console.log('entro delete');
     const { id } = req.params;
     const { _id } = req.user;
     const user = await User.findById(_id);
     const cocheToDelete = await Coche.findByIdAndDelete(id);
 
     if (!cocheToDelete) {
-      return res.status(404).json("Problema al encontrar el coche");
+      return res.status(404).json('Problema al encontrar el coche');
     } else {
-      if (cocheToDelete.estado == "none") {
+      if (cocheToDelete.estado == 'none') {
         await user.updateOne({ $pull: { coche_cliente: id } });
         //-------------------->borrar imagenes<-----------------------------
-        return res.status(200).json("coche del USER borrado correctamente");
+        return res.status(200).json('coche del USER borrado correctamente');
       }
-      if (cocheToDelete.estado == "venta") {
+      if (cocheToDelete.estado == 'venta') {
         //Recogemos los arrays populados que hay actualizar, ya que el coche va a estar en los intereses de los usuarios, va a tener
         //comentarios que hay que borrar de los usuarios y va a tener likes que habra que borrar de los usuarios tambien
         const arrayInteresados = cocheToDelete.interesados;
@@ -81,12 +80,12 @@ const deleteCoche = async (req, res, next) => {
         arrayLike.forEach(async (elem) => {
           await elem.updateOne({ $pull: { like_coche: elem } });
         });
-        return res.status(200).json("coche en VENTA borrado correctamente");
+        return res.status(200).json('coche en VENTA borrado correctamente');
       }
-      if (cocheToDelete.estado == "taller") {
+      if (cocheToDelete.estado == 'taller') {
         return res
           .status(404)
-          .json("El coche esta en el taller y no se puede borrar");
+          .json('El coche esta en el taller y no se puede borrar');
       }
     }
   } catch (error) {
@@ -103,19 +102,19 @@ const updateCoche = async (req, res, next) => {
       precio: precio,
       estado: estado,
     });
-    console.log("id", id);
+    console.log('id', cocheUpdate);
     const cocheYaUpdate = await Coche.findById(id);
-    console.log("ya update", cocheYaUpdate);
+    console.log('ya update', cocheYaUpdate);
     //ACTUALIZAMOS EL COCHE Y COMPROBAMOS MEDIANTE EL PRECIO (ya que es el unico campo que se puede actualizr) SI SE HA ACTUALIZADO BIEN.
     if (cocheYaUpdate.precio == precio) {
       return res.status(200).json({
-        test: "precio actualizado",
+        test: 'precio actualizado',
         cocheYaUpdate,
       });
     } else {
       return res
         .status(404)
-        .json("El precio del coche no se ha podido actualizar");
+        .json('El precio del coche no se ha podido actualizar');
     }
   } catch (error) {
     return next(error);
@@ -131,7 +130,7 @@ const getAllCoche = async (req, res, next) => {
     if (allCoches) {
       return res.status(200).json(allCoches);
     } else {
-      return res.status(404).json("No hay ningun coche en la base de datos");
+      return res.status(404).json('No hay ningun coche en la base de datos');
     }
   } catch (error) {
     return next(error);
@@ -140,12 +139,12 @@ const getAllCoche = async (req, res, next) => {
 //--------------get-coches-venta-----------
 const getCochesVenta = async (req, res, next) => {
   try {
-    const allCoches = await Coche.find({ estado: "venta" });
+    const allCoches = await Coche.find({ estado: 'venta' });
     const ordenados = allCoches.sort((a, b) => b.like.length - a.like.length);
     if (ordenados) {
       return res.status(200).json(ordenados);
     } else {
-      return res.status(404).json("No hay ningun coche en la base de datos");
+      return res.status(404).json('No hay ningun coche en la base de datos');
     }
   } catch (error) {
     return next(error);
@@ -165,7 +164,7 @@ const getByMarca = async (req, res, next) => {
       });
       return res.status(200).json(marcas);
     } else {
-      return res.status(404).json("No se ha encontrado ningun coche");
+      return res.status(404).json('No se ha encontrado ningun coche');
     }
   } catch (error) {
     return next(error);
@@ -198,7 +197,7 @@ const getCocheById = async (req, res, next) => {
     if (coments) {
       return res.status(200).json(coments);
     } else {
-      return res.status(404).json("Error al encontrar los comentarios");
+      return res.status(404).json('Error al encontrar los comentarios');
     }
   } catch (error) {
     return next(error);
@@ -218,11 +217,11 @@ const addInteresado = async (req, res, next) => {
     if (!user.intereses.includes(id)) {
       await user.updateOne({ $push: { intereses: id } });
       await coche.updateOne({ $push: { interesados: _id } });
-      return res.status(200).json("Coche añadido a los intereses del user");
+      return res.status(200).json('Coche añadido a los intereses del user');
     } else {
       await user.updateOne({ $pull: { intereses: id } });
       await coche.updateOne({ $pull: { interesados: _id } });
-      return res.status(200).json("Coche quitado de los intereses del user");
+      return res.status(200).json('Coche quitado de los intereses del user');
     }
   } catch (error) {
     return next(error);
@@ -242,15 +241,15 @@ const addLike = async (req, res, next) => {
       await coche.updateOne({ $push: { like: _id } });
       await user.updateOne({ $push: { like_coche: id } });
       return res.status(200).json({
-        results: "Like añadido al user",
-        update: await Coche.find({ estado: "venta" }),
+        results: 'Like añadido al user',
+        update: await Coche.find({ estado: 'venta' }),
       });
     } else {
       await coche.updateOne({ $pull: { like: _id } });
       await user.updateOne({ $pull: { like_coche: id } });
       return res.status(200).json({
-        results: "Like quitado del user",
-        update: await Coche.find({ estado: "venta" }),
+        results: 'Like quitado del user',
+        update: await Coche.find({ estado: 'venta' }),
       });
     }
   } catch (error) {
@@ -260,23 +259,23 @@ const addLike = async (req, res, next) => {
 //--------------add-taller------------
 const addTaller = async (req, res, next) => {
   try {
-    console.log("reqqqqqq", req.body);
+    console.log('reqqqqqq', req.body);
     const { idCoche, idTaller } = req.body;
     const taller = await User.findById(idTaller);
     const coche = await Coche.findById(idCoche);
 
-    console.log("taller", idTaller);
-    console.log("coche", idCoche);
+    console.log('taller', idTaller);
+    console.log('coche', idCoche);
     //AÑADIMOS EL COCHE AL TALLER Y AL USUARIO-TALLER LE AÑADIMOS EL COCHE
     if (coche) {
-      console.log("taller punto taller", taller.taller);
+      console.log('taller punto taller', taller.taller);
       console.log(coche._id);
       if (taller.taller.includes(coche._id)) {
-        return res.status(404).json("El taller ya incluye ese coche");
+        return res.status(404).json('El taller ya incluye ese coche');
       } else {
         await coche.updateOne({ $push: { taller: idTaller } });
         await taller.updateOne({ $push: { taller: idCoche } });
-        await coche.updateOne({ estado: "taller" });
+        await coche.updateOne({ estado: 'taller' });
         const updatedCoche = await User.findById(idCoche);
         console.log(updatedCoche);
         return res
@@ -288,7 +287,7 @@ const addTaller = async (req, res, next) => {
     } else {
       return res
         .status(404)
-        .json("No hay ningun coche ni ningun taller disponible");
+        .json('No hay ningun coche ni ningun taller disponible');
     }
   } catch (error) {
     return next(error);
@@ -319,7 +318,7 @@ const getByLike = async (req, res, next) => {
       console.log(arrayLikesOrdenado);
       return res.status(200).json(arrayLikesOrdenado);
     } else {
-      return res.status(404).json("No hay coches con likes para ordenar");
+      return res.status(404).json('No hay coches con likes para ordenar');
     }
   } catch (error) {
     return next(error);

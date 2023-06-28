@@ -1,10 +1,7 @@
-const nodemailer = require("nodemailer");
-const bcrypt = require("bcrypt");
-const dotenv = require("dotenv");
-const User = require("../models/User.model");
-const Review = require("../models/Review.model");
-const Taller = require("../models/Taller.model");
-const Catalogo = require("../models/Catalogo.model");
+const User = require('../models/User.model');
+const Review = require('../models/Review.model');
+
+const Catalogo = require('../models/Catalogo.model');
 
 //--------1-----------CREATE REVIEW--------------------------
 //-----------------------------------------------------------
@@ -19,7 +16,7 @@ const createReview = async (req, res, next) => {
     const cocheReview = await Catalogo.findById(id);
 
     if (!userReview) {
-      return res.status(404).json("El usuario no existe");
+      return res.status(404).json('El usuario no existe');
     } else {
       const newReview = new Review({
         cliente: userReview,
@@ -38,11 +35,11 @@ const createReview = async (req, res, next) => {
             $push: { review_coche: newReview._id },
           });
           await cocheReview.updateOne({ $push: { reviews: newReview._id } });
-          return res.status(200).json("Review creada correctamente");
+          return res.status(200).json('Review creada correctamente');
         } else {
           return res
             .status(404)
-            .json("La review no se ha guardado correctamente");
+            .json('La review no se ha guardado correctamente');
         }
       } catch (error) {
         return next(error);
@@ -57,14 +54,13 @@ const createReview = async (req, res, next) => {
 const deleteReview = async (req, res, next) => {
   try {
     const { id } = req.params; //id de la review que la recibe por parametros al llamar a la funcion en el front
-    const { _id } = req.user;
+
     const deleteReview = await Review.findByIdAndDelete(id);
-    const userReview = await User.findById(_id);
 
     //SI BORRAMOS UNA REVIEW HAY QUE QUITARLA DEL USUARIO Y DEL COCHE DEL CATALOGO, CON LO CUAL HACEMOS UN pull DE LAS CLAVES
     //USER-> review_coche Y CATALOGO-> reviews PARA BORRAR LA REVIEW DE AMBOS SITIOS
     if (!deleteReview) {
-      return res.status(404).json("Problema con la review. No existe");
+      return res.status(404).json('Problema con la review. No existe');
     } else {
       const idUser = deleteReview.cliente;
       const idCoche = deleteReview.coche_tienda;
@@ -75,7 +71,7 @@ const deleteReview = async (req, res, next) => {
       await Catalogo.findByIdAndUpdate(idCoche, {
         $pull: { reviews: id },
       });
-      return res.status(200).json("Review borrada correctamente");
+      return res.status(200).json('Review borrada correctamente');
     }
   } catch (error) {
     return next(error);
@@ -91,17 +87,17 @@ const mediaPuntuacionReview = async (req, res, next) => {
     //BUSCAMOS EL COCHE DEL QUE QUEREMOS OBTENER LA MEDIA DE PUNTUACION, CREAMOS UNA VARIABLE DONDE ALMACENAREMOS LA SUMA TOTAL DE TODAS
     //LAS PUNTUACIONES QUE EXISTEN EN ESE COCHE Y DESPUES LO DIVIDIMOS ENTRE EL NUMERO DE PUNTUACIONES PARA ASI OBTENER LA MEDIA
     if (!coche) {
-      return res.status(404).json("Error al cargar el coche");
+      return res.status(404).json('Error al cargar el coche');
     } else {
       const arrayReviews = coche.reviews;
-      const sumaTotal = 0;
+      let sumaTotal = 0;
       arrayReviews.forEach((elem) => {
         sumaTotal += elem.estrellas;
       });
       const media = sumaTotal / arrayReviews.length;
 
       if (media) {
-        return res.status(200).json("La media es: " + media);
+        return res.status(200).json('La media es: ' + media);
       } else {
         return res.status(404).json();
       }
@@ -121,7 +117,7 @@ const getReviewCatalogo = async (req, res, next) => {
     if (reviews) {
       return res.status(200).json(reviews);
     } else {
-      return res.status(404).json("No se ha encontrado ninguna review");
+      return res.status(404).json('No se ha encontrado ninguna review');
     }
   } catch (error) {
     return next(error);
@@ -141,7 +137,7 @@ const getReviewByDni = async (req, res, next) => {
     if (reviews) {
       return res.status(200).json(reviews);
     } else {
-      return res.status(404).json("No hay ninguna review");
+      return res.status(404).json('No hay ninguna review');
     }
   } catch (error) {
     return next(error);
@@ -156,7 +152,7 @@ const getAllReview = async (req, res, next) => {
     if (allReviews) {
       return res.status(200).json(allReviews);
     } else {
-      return res.status(404).json("no hay ninguna review creada");
+      return res.status(404).json('no hay ninguna review creada');
     }
   } catch (error) {
     return next(error);
