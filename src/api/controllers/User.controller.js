@@ -171,7 +171,7 @@ const resendCodeUser = async (req, res, next) => {
       console.log('id reenvio', _id);
       return res.redirect(
         307,
-        `http://localhost:${PORT}/api/v1/user/register/sendEmail/${_id}`
+        `https://backend-lms-murex.vercel.app//api/v1/user/register/sendEmail/${_id}`
       );
     } else {
       return res.status(404).json('El usuario no existe');
@@ -238,7 +238,7 @@ const forgotPasswordUser = async (req, res, next) => {
     if (userDB) {
       return res.redirect(
         307,
-        `http://localhost:${PORT}/api/v1/user/sendPassword/${userDB._id}`
+        `https://backend-lms-murex.vercel.app//api/v1/user/sendPassword/${userDB._id}`
       );
     } else {
       return res.status(404).json('El usuario no existe');
