@@ -49,7 +49,7 @@ const getById = async (req, res, next) => {
 //---------------------add-like--------------------------
 const addLike = async (req, res, next) => {
   try {
-    const { id } = req.body;
+    const { id, variable } = req.body;
     const { _id } = req.user;
     const user = await User.findById(_id);
     const coche = await CocheBase.findById(id);
@@ -61,14 +61,14 @@ const addLike = async (req, res, next) => {
       await user.updateOne({ $push: { like_coche: id } });
       return res.status(200).json({
         results: 'Like añadido al user',
-        update: await CocheBase.find(),
+        update: await CocheBase.find({ marca: variable }),
       });
     } else {
       await coche.updateOne({ $pull: { like: _id } });
       await user.updateOne({ $pull: { like_coche: id } });
       return res.status(200).json({
         results: 'Like quitado del user',
-        update: await CocheBase.find(),
+        update: await CocheBase.find({ marca: variable }),
       });
     }
   } catch (error) {
