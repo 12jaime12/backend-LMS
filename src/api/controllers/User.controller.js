@@ -49,7 +49,7 @@ const registerUser = async (req, res, next) => {
           console.log('redirect');
           return res.redirect(
             307,
-            `http://localhost:${PORT}/api/v1/user/register/sendEmail/${saveUser.id}`
+            `https://backend-lms-murex.vercel.app/api/v1/user/register/sendEmail/${saveUser.id}`
           );
           //ENVIAMOS EL CODIGO DE CONFIRMACION MEDIANTE REDIRECT Y CON UNA FUNCION sendEmail() QUE LA TENEMOS AQUI ABAJO
         } else {
